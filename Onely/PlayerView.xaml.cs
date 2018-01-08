@@ -9,6 +9,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.Storage.Pickers;
+using System.Diagnostics;
+using Windows.Devices.Input;
+using Windows.UI.Input;
+using Windows.Foundation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -21,13 +25,10 @@ namespace Onely
     public sealed partial class PlayerView : Page
     {
         private Player player;
-        
-        private Symbol[] RepeatModeIcons = { Symbol.RepeatAll, Symbol.RepeatAll, Symbol.RepeatOne };
 
         private bool IsNotCurrentlyLoading = true;
         private bool ReorderingInitiated = false;
         
-        private SymbolIcon ToggleRepeatIcon = new SymbolIcon(Symbol.RepeatAll);
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
 
@@ -58,21 +59,51 @@ namespace Onely
 
         private void TogglePlayPause() => player.TogglePlayPause();
 
-        private void ToggleRepeatMode()
-        {
-            ToggleRepeatIcon.Symbol = RepeatModeIcons[player.ToggleRepeatMode()];
-        }
-
         private void ToggleShuffle() => player.ToggleShuffle();
         
-        private void ClearPlaylist()
+        private void ClearPlaylist() => player.ClearPlaylist();
+
+        private void DeleteItem(int index) => player.DeleteItem(index);
+
+        private Symbol PlayingToSymbol(bool isPlaying)
         {
-            player.ClearPlaylist();
+            if (isPlaying)
+                return Symbol.Pause;
+            return Symbol.Play;
         }
 
-        private void DeleteItem(int index)
+        private void ToggleRepeatMode() => player.ToggleRepeatMode();
+
+        private Symbol RepeatModeToSymbol(int repeatMode)
         {
-            player.DeleteItem(index);
+            switch (player.RepeatMode)
+            {
+                case 0:
+                    return Symbol.RepeatAll;
+                case 1:
+                    return Symbol.RepeatAll;
+                case 2: 
+                    return Symbol.RepeatOne;
+                default:
+                    return Symbol.RepeatAll;
+            }
+        }
+
+        private double RepeatModeToOpacity(int repeatMode)
+        {
+            if (repeatMode != 0)
+                return 1.0;
+            return 0.3;
+        }
+
+        private void ProgressBarSeek(object sender, PointerRoutedEventArgs e)
+        {
+            var bar = (UIElement)sender;
+            PointerPoint pointer = e.GetCurrentPoint(bar);
+            Point position = pointer.Position;
+            var size = bar.RenderSize;
+            var ratio = (position.X / size.Width);
+            player.SeekFromRatio(ratio);
         }
 
         private void AddFileFilters(ref FileOpenPicker picker)

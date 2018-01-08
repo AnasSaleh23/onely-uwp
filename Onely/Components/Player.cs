@@ -67,7 +67,15 @@ namespace Onely
             }
         }
 
-        private int RepeatMode = 0;
+        private int repeatMode = 0;
+        public int RepeatMode
+        {
+            get => this.repeatMode;
+            set
+            {
+                SetProperty(this.repeatMode, value, () => this.repeatMode = value);
+            }
+        }
 
         public Player()
         {
@@ -149,6 +157,12 @@ namespace Onely
             {
                 Play();
             }
+        }
+
+        public void SeekFromRatio(double ratio)
+        {
+            var session = player.PlaybackSession;
+            session.Position = TimeSpan.FromSeconds(ratio * session.NaturalDuration.TotalSeconds);
         }
 
         private void OnTrackEnd(MediaPlayer sender, object args)
@@ -257,7 +271,8 @@ namespace Onely
                 bool loaded = await Playlist.LoadFiles(audoFiles, imageFiles);
                 if (loaded && player.Source == null)
                 {
-                    player.Source = Playlist.Items[0].Source;
+                    NowPlaying = Playlist.Items[0];
+                    player.Source = NowPlaying.Source;
                     TargetIndex = 0;
                 }
             }
@@ -285,12 +300,12 @@ namespace Onely
         {
             if (player.Source != null)
                 return;
-            var source = Playlist.Items[0];
-            if (source != null)
-            {
-                player.Source = Playlist.Items[0].Source;
-            }
+            NowPlaying = Playlist.Items[0];
             TargetIndex = 0;
+            if (NowPlaying != null)
+            {
+                player.Source = NowPlaying.Source;
+            }
         }
 
         public int SavePlaylist(string name)

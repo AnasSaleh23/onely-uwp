@@ -180,15 +180,18 @@ namespace Onely
 
         private void GenerateRandomIndexes()
         {
+            if (Items.Count() < 1)
+                return;
             var list = new List<int>(Enumerable.Range(0, Items.Count() - 1));
+            // This is a cheap and not totally random way to do this, but it works ok
             RandomIndexes = list.OrderBy(a => Guid.NewGuid()).ToList();
         }
 
-        private AlbumCover GetExistingAlbumCover(string p)
+        private AlbumCover GetExistingAlbumCover(string path)
         {
             foreach(var i in AlbumCovers)
             {
-                if (i.CoverPath == p)
+                if (i.CoverPath == path)
                     return i;
             }
             return null;

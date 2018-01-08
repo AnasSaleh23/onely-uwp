@@ -58,7 +58,7 @@
             <TextBlock Text="Album" Padding="12,0" Grid.Column="1"/>
             <TextBlock Text="Artist" Padding="12,0" Grid.Column="2"/>
         </Grid>
-        <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="Transport">
+        <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PlaylistItem">
                     <Grid>
@@ -74,16 +74,26 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <CommandBar x:Name="Transport" VerticalAlignment="Center" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+        <ProgressBar x:Name="ProgressBar" PointerPressed="ProgressBarSeek" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="Transport"/>
+        <CommandBar x:Name="Transport" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <CommandBar.Content>
-                <ProgressBar Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" Width="300"/>
+                <StackPanel Orientation="Horizontal">
+                    <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Margin="0,0,8,0"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center"/>
+                </StackPanel>
             </CommandBar.Content>
             <AppBarButton Click="{x:Bind RW}" Icon="Previous" Label="Rewind"/>
-            <AppBarToggleButton Click="{x:Bind TogglePlayPause}" Icon="Play" IsChecked="{x:Bind player.IsPlaying, Mode=OneWay}" Label="Play"/>
+            <AppBarButton Click="{x:Bind TogglePlayPause}" Label="Play">
+                <SymbolIcon Symbol="{x:Bind PlayingToSymbol(player.IsPlaying), Mode=OneWay}"></SymbolIcon>
+            </AppBarButton>
             <AppBarButton Click="{x:Bind FF}" Icon="Next" Label="Fast Forward"/>
             <AppBarSeparator/>
-            <AppBarToggleButton Icon="Shuffle" Click="{x:Bind ToggleShuffle}" Label="Shuffle"/>
-            <AppBarButton Icon="{x:Bind ToggleRepeatIcon, Mode=OneWay}" Click="{x:Bind ToggleRepeatMode}" Label="Repeat Mode"/>
+            <AppBarButton Click="{x:Bind ToggleShuffle}" Label="Shuffle">
+                <SymbolIcon Symbol="Shuffle"></SymbolIcon>
+            </AppBarButton>
+            <AppBarButton Click="{x:Bind ToggleRepeatMode}" Label="Repeat Mode" Opacity="{x:Bind RepeatModeToOpacity(player.RepeatMode), Mode=OneWay}">
+                <SymbolIcon Symbol="{x:Bind RepeatModeToSymbol(player.RepeatMode), Mode=OneWay}"></SymbolIcon>
+            </AppBarButton>
         </CommandBar>
 
         <MediaPlayerElement x:Name="mediaPlayerElement" AreTransportControlsEnabled="False" RelativePanel.Below="Transport"/>
