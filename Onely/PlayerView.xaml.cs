@@ -103,7 +103,19 @@ namespace Onely
             Point position = pointer.Position;
             var size = bar.RenderSize;
             var ratio = (position.X / size.Width);
+            if (!player.IsPlaying)
+                player.PlayProgress = ratio * 100;
             player.SeekFromRatio(ratio);
+        }
+
+        private void CursorShowHand()
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+        }
+
+        private void CursorShowArrow()
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
         }
 
         private void AddFileFilters(ref FileOpenPicker picker)

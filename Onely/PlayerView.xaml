@@ -54,9 +54,9 @@
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Title" Padding="12,0" Grid.Column="0"/>
-            <TextBlock Text="Album" Padding="12,0" Grid.Column="1"/>
-            <TextBlock Text="Artist" Padding="12,0" Grid.Column="2"/>
+            <TextBlock Text="Title" Padding="24,0" Grid.Column="0"/>
+            <TextBlock Text="Album" Padding="24,0" Grid.Column="1"/>
+            <TextBlock Text="Artist" Padding="24,0" Grid.Column="2"/>
         </Grid>
         <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
             <ListView.ItemTemplate>
@@ -74,7 +74,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ProgressBar x:Name="ProgressBar" PointerPressed="ProgressBarSeek" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="Transport"/>
+        <ProgressBar x:Name="ProgressBar" PointerPressed="ProgressBarSeek" PointerReleased="ProgressBarSeek" PointerEntered="{x:Bind CursorShowHand }" PointerExited="{x:Bind CursorShowArrow }" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="Transport"/>
         <CommandBar x:Name="Transport" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
