@@ -60,6 +60,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="300" HorizontalAlignment="Center" Margin="0,0,0,24" Grid.Column="0"/>
+            <SymbolIcon Symbol="Audio" Width="300" Height="300" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
         </Grid>
         
         <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
@@ -105,6 +106,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Grid.Column="0"/>
+                    <SymbolIcon Symbol="Audio" Width="48" Height="48" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" Grid.Column="0"/>
                     <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="1"/>
                     <SymbolIcon Symbol="OutlineStar" Grid.Column="2"/>
                     <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="3"/>
