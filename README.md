@@ -1,6 +1,6 @@
 # Onely UWP
 
-A Universal Windows version of the [Onely](https://github.com/mphonic/onely) music player, written in C#. Like the original Onely, this is a light, fast, and friendly music and playlist player.
+A [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide) version of the [Onely](https://github.com/mphonic/onely) music player, written in C#. Like the original Onely, this is a light, fast, and friendly music playlist player.
 
 ### Work in Progress
 
