@@ -85,10 +85,18 @@ namespace Onely
 
         public void RemoveAt(int index)
         {
-            var item = Items[index];
+            PlaylistItem item;
+            try
+            {
+                item = Items[index];
+            } catch(IndexOutOfRangeException e)
+            {
+                throw e;
+            }
+
             item.Source.Dispose();
             Items.RemoveAt(index);
-            if (SelectedIndex > index)
+            if (SelectedIndex >= index)
             {
                 SelectedIndex--;
             }
@@ -117,16 +125,17 @@ namespace Onely
 
         public PlaylistItem SetCurrentPositionAndGetItem(int index)
         {
+            PlaylistItem item;
             try
             {
-                var item = Items[index];
-                SelectedIndex = index;
-                return item;
-            } catch(Exception e)
+                item = Items[index];
+            } catch(IndexOutOfRangeException e)
             {
-                Debug.WriteLine(e.ToString());
-                return null;
+                throw e;
             }
+
+            SelectedIndex = index;
+            return item;
         }
 
         public int GetNextIndex()

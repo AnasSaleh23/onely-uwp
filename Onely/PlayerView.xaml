@@ -3,10 +3,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Onely"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:oconverters="using:Onely.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BoolToObjectConverter x:Key="BooleanToVisibilityInversionConverter" TrueValue="Collapsed" FalseValue="Visible"/>
+        <converters:BoolToObjectConverter x:Key="BooleanToOpacityConverter" TrueValue="1.0" FalseValue="0.3"/>
+        <converters:EmptyCollectionToObjectConverter x:Key="EmptyCollectionToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
+        <converters:EmptyObjectToObjectConverter x:Key="EmptyObjectToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
+        <oconverters:PlayingToSymbolConverter x:Key="PlayingToSymbolConverter"/>
+        <oconverters:ZeroModeToOpacityConverter x:Key="ZeroModeToOpacityConverter"/>
+        <oconverters:RepeatModeToSymbolConverter x:Key="RepeatModeToSymbolConverter"/>
+        
         <Style x:Key="PaneItemStyle" TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0"/>
         </Style>
@@ -42,13 +54,15 @@
                 </ListView>
             </SplitView.Content>
         </SplitView>
+        
         <Grid x:Name="CoverImageContainer" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="300" HorizontalAlignment="Center" Margin="0,0,0,24" Grid.Column="0"/>
         </Grid>
-        <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer">
+        
+        <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="200"/>
@@ -58,6 +72,7 @@
             <TextBlock Text="Album" Padding="24,0" Grid.Column="1"/>
             <TextBlock Text="Artist" Padding="24,0" Grid.Column="2"/>
         </Grid>
+        
         <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PlaylistItem">
@@ -74,25 +89,44 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        
         <ProgressBar x:Name="ProgressBar" PointerPressed="ProgressBarSeek" PointerReleased="ProgressBarSeek" PointerEntered="{x:Bind CursorShowHand }" PointerExited="{x:Bind CursorShowArrow }" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="Transport"/>
+        
         <CommandBar x:Name="Transport" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+
             <CommandBar.Content>
-                <StackPanel Orientation="Horizontal">
-                    <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Margin="0,0,8,0"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center"/>
-                </StackPanel>
+                <Grid VerticalAlignment="Stretch" ColumnSpacing="12" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Grid.Column="0"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="1"/>
+                    <SymbolIcon Symbol="OutlineStar" Grid.Column="2"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="3"/>
+                    <SymbolIcon Symbol="OutlineStar" Grid.Column="4"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="5"/>
+                </Grid>
             </CommandBar.Content>
+            
             <AppBarButton Click="{x:Bind RW}" Icon="Previous" Label="Rewind"/>
-            <AppBarButton Click="{x:Bind TogglePlayPause}" Label="Play">
-                <SymbolIcon Symbol="{x:Bind PlayingToSymbol(player.IsPlaying), Mode=OneWay}"></SymbolIcon>
+            <AppBarButton Click="{x:Bind TogglePlayPause}" Label="Play" IsEnabled="{x:Bind player.IsWaiting, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
+                <StackPanel>
+                    <ProgressRing IsActive="{x:Bind player.IsWaiting, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
+                    <SymbolIcon Symbol="{x:Bind player.IsPlaying, Converter={StaticResource PlayingToSymbolConverter}, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BooleanToVisibilityInversionConverter}, Mode=OneWay}"></SymbolIcon>
+                </StackPanel>
             </AppBarButton>
             <AppBarButton Click="{x:Bind FF}" Icon="Next" Label="Fast Forward"/>
             <AppBarSeparator/>
-            <AppBarButton Click="{x:Bind ToggleShuffle}" Label="Shuffle">
+            <AppBarButton Click="{x:Bind ToggleShuffle}" Label="Shuffle" Opacity="{x:Bind player.IsShuffling, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}">
                 <SymbolIcon Symbol="Shuffle"></SymbolIcon>
             </AppBarButton>
-            <AppBarButton Click="{x:Bind ToggleRepeatMode}" Label="Repeat Mode" Opacity="{x:Bind RepeatModeToOpacity(player.RepeatMode), Mode=OneWay}">
-                <SymbolIcon Symbol="{x:Bind RepeatModeToSymbol(player.RepeatMode), Mode=OneWay}"></SymbolIcon>
+            <AppBarButton Click="{x:Bind ToggleRepeatMode}" Label="Repeat Mode" Opacity="{x:Bind player.RepeatMode, Converter={StaticResource ZeroModeToOpacityConverter}, Mode=OneWay}">
+                <SymbolIcon Symbol="{x:Bind player.RepeatMode, Converter={StaticResource RepeatModeToSymbolConverter}, Mode=OneWay}"></SymbolIcon>
             </AppBarButton>
         </CommandBar>
 

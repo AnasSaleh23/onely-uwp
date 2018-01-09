@@ -128,7 +128,7 @@ namespace Onely
                 coverPath = item.MainCover.CoverPath;
             }
             command.Parameters.AddWithValue("@PlaylistId", PlaylistId);
-            command.Parameters.AddWithValue("@Path", item.Path);
+            command.Parameters.AddWithValue("@Path", item.MusicPath);
             command.Parameters.AddWithValue("@CoverPath", coverPath);
             command.Parameters.AddWithValue("@Sort", sortOrder);
             OnelyDB.ExecuteReader(command);

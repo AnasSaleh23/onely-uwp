@@ -57,13 +57,23 @@ namespace Onely
             }
         }
 
-        private bool isWaiting = false;
+        private bool isWaiting = true;
         public bool IsWaiting
         {
             get => this.isWaiting;
             set
             {
                 SetProperty(this.isWaiting, value, () => this.isWaiting = value);
+            }
+        }
+
+        private bool isShuffling = false;
+        public bool IsShuffling
+        {
+            get => this.isShuffling;
+            set
+            {
+                SetProperty(this.isShuffling, value, () => this.isShuffling = value);
             }
         }
 
@@ -232,7 +242,7 @@ namespace Onely
 
         public void ToggleShuffle()
         {
-            Playlist.Shuffle = !Playlist.Shuffle;
+            IsShuffling = Playlist.Shuffle = !Playlist.Shuffle;
         }
 
 

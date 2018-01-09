@@ -65,36 +65,7 @@ namespace Onely
 
         private void DeleteItem(int index) => player.DeleteItem(index);
 
-        private Symbol PlayingToSymbol(bool isPlaying)
-        {
-            if (isPlaying)
-                return Symbol.Pause;
-            return Symbol.Play;
-        }
-
         private void ToggleRepeatMode() => player.ToggleRepeatMode();
-
-        private Symbol RepeatModeToSymbol(int repeatMode)
-        {
-            switch (player.RepeatMode)
-            {
-                case 0:
-                    return Symbol.RepeatAll;
-                case 1:
-                    return Symbol.RepeatAll;
-                case 2: 
-                    return Symbol.RepeatOne;
-                default:
-                    return Symbol.RepeatAll;
-            }
-        }
-
-        private double RepeatModeToOpacity(int repeatMode)
-        {
-            if (repeatMode != 0)
-                return 1.0;
-            return 0.3;
-        }
 
         private void ProgressBarSeek(object sender, PointerRoutedEventArgs e)
         {
