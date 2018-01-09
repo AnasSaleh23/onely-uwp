@@ -67,6 +67,16 @@ namespace Onely
             }
         }
 
+        private bool isBusy = false;
+        public bool IsBusy
+        {
+            get => this.isBusy;
+            set
+            {
+                SetProperty(this.isBusy, value, () => this.isBusy = value);
+            }
+        }
+
         private bool isShuffling = false;
         public bool IsShuffling
         {
@@ -74,6 +84,16 @@ namespace Onely
             set
             {
                 SetProperty(this.isShuffling, value, () => this.isShuffling = value);
+            }
+        }
+
+        private bool hasItemsInPlaylist;
+        public bool HasItemsInPlaylist
+        {
+            get => this.hasItemsInPlaylist;
+            set
+            {
+                SetProperty(this.hasItemsInPlaylist, value, () => this.hasItemsInPlaylist = value);
             }
         }
 
@@ -266,20 +286,36 @@ namespace Onely
             {
                 ClearPlayer();
             }
+
             Playlist.RemoveAt(index);
-            if (Playlist.Items.Count() < 1)
+            var numRemainingItems = Playlist.Items.Count();
+            if (numRemainingItems < 1)
+            {
+                HasItemsInPlaylist = false;
+                NowPlaying = null;
                 return;
+            }
+                
             if ((player.Source == null) && (Playlist.SelectedItem != null))
             {
                 player.Source = Playlist.SelectedItem.Source;
+                NowPlaying = Playlist.SelectedItem;
             }
-            TargetIndex = Playlist.SelectedIndex;
+
+            if (index < numRemainingItems)
+            {
+                TargetIndex = index;
+            } else
+            {
+                TargetIndex = numRemainingItems - 1;
+            }
         }
 
         public async Task LoadFilesToPlaylist(IEnumerable<StorageFile> audoFiles, IEnumerable<StorageFile> imageFiles = null)
         {
             if (audoFiles.Count() > 0)
             {
+                IsBusy = true;
                 bool loaded = await Playlist.LoadFiles(audoFiles, imageFiles);
                 UpdateOnPlaylistLoad(loaded);
             }
@@ -287,27 +323,42 @@ namespace Onely
 
         public async void LoadPlaylist(int id)
         {
+            IsBusy = true;
+            bool loaded = await Playlist.ClearAndLoadNew(id);
+            UpdateOnPlaylistLoad(loaded);
+        }
+
+        public async void AddPlaylistToExistingPlaylist(int id)
+        {
+            IsBusy = true;
             bool loaded = await Playlist.LoadNew(id);
             UpdateOnPlaylistLoad(loaded);
         }
 
         public async void LoadDefaultPlaylist()
         {
+            IsBusy = true;
             bool loaded = await Playlist.LoadDefault();
             UpdateOnPlaylistLoad(loaded);   
         }
 
         private void UpdateOnPlaylistLoad(bool didLoad)
         {
+            IsBusy = false;
+
+            if (Playlist.Items.Count() == 0)
+            {
+                IsWaiting = false;
+                HasItemsInPlaylist = false;
+                ClearPlayer();
+                return;
+            }
+
             if (didLoad)
             {
+                HasItemsInPlaylist = true;
                 if (player.Source != null)
                     return;
-                if (Playlist.Items.Count() == 0)
-                {
-                    isWaiting = false;
-                    return;
-                }
                 NowPlaying = Playlist.Items[0];
                 TargetIndex = 0;
                 if (NowPlaying != null)
@@ -316,7 +367,7 @@ namespace Onely
                     return;
                 }
             }
-            // prevent endless waiting messages when there's no playlist
+            // prevent endless waiting messages if load anomaly
             IsWaiting = false;
         }
 

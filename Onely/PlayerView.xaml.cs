@@ -25,8 +25,7 @@ namespace Onely
     public sealed partial class PlayerView : Page
     {
         private Player player;
-
-        private bool IsNotCurrentlyLoading = true;
+        
         private bool ReorderingInitiated = false;
         
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
@@ -115,20 +114,15 @@ namespace Onely
 
         private async void AddFiles()
         {
-            IsNotCurrentlyLoading = false;
-
             var filePicker = new FileOpenPicker();
             AddFileFilters(ref filePicker);
 
             IReadOnlyList<StorageFile> files = await filePicker.PickMultipleFilesAsync();
             await LoadFiles(files);
-            IsNotCurrentlyLoading = true;
         }
 
         private async void AddFolder()
         {
-            IsNotCurrentlyLoading = false;
-
             var folderPicker = new Windows.Storage.Pickers.FolderPicker();
             AddFileFilters(ref folderPicker);
 
@@ -138,8 +132,6 @@ namespace Onely
                 IReadOnlyList<StorageFile> files = await folder.GetFilesAsync();
                 await LoadFiles(files);
             }
-
-            IsNotCurrentlyLoading = true;
         }
 
         private async void Playlist_Drop(object sender, DragEventArgs e)
@@ -151,8 +143,6 @@ namespace Onely
             }
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
-                IsNotCurrentlyLoading = false;
-
                 var items = await e.DataView.GetStorageItemsAsync();
                 IEnumerable<StorageFile> files = null;
                 IEnumerable<StorageFile> tmpFiles = null;
@@ -182,8 +172,6 @@ namespace Onely
                     files = files.Concat(tmpFiles);
                 }
                 await LoadFiles(files);
-
-                IsNotCurrentlyLoading = true;
             }
         }
 

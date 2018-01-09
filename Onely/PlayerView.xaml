@@ -10,9 +10,9 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-        <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:BoolToObjectConverter x:Key="BooleanToVisibilityInversionConverter" TrueValue="Collapsed" FalseValue="Visible"/>
-        <converters:BoolToObjectConverter x:Key="BooleanToOpacityConverter" TrueValue="1.0" FalseValue="0.3"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToObjectConverter x:Key="BoolToVisibilityInversionConverter" TrueValue="Collapsed" FalseValue="Visible"/>
+        <converters:BoolToObjectConverter x:Key="BoolToOpacityConverter" TrueValue="1.0" FalseValue="0.3"/>
         <converters:EmptyCollectionToObjectConverter x:Key="EmptyCollectionToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <converters:EmptyObjectToObjectConverter x:Key="EmptyObjectToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <oconverters:PlayingToSymbolConverter x:Key="PlayingToSymbolConverter"/>
@@ -28,19 +28,19 @@
             <SplitView.Pane>
                 <ListBox ItemContainerStyle="{StaticResource PaneItemStyle}">
                     <ListBoxItem>
-                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" IsEnabled="{x:Bind IsNotCurrentlyLoading, Mode=OneWay}"/>
+                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists"/>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <AppBarButton x:Name="AddFilesButton" Click="{x:Bind AddFiles}" Icon="OpenFile" Label="Add Files" IsEnabled="{x:Bind IsNotCurrentlyLoading, Mode=OneWay}"/>
+                        <AppBarButton x:Name="AddFilesButton" Click="{x:Bind AddFiles}" Icon="OpenFile" Label="Add Files"/>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <AppBarButton x:Name="AddFolderButton" Click="{x:Bind AddFolder}" Icon="Folder" Label="Add Folder" IsEnabled="{x:Bind IsNotCurrentlyLoading, Mode=OneWay}"/>
+                        <AppBarButton x:Name="AddFolderButton" Click="{x:Bind AddFolder}" Icon="Folder" Label="Add Folder"/>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <AppBarButton x:Name="SavePlaylistButton" Click="{x:Bind OpenSaveDialog}" Icon="Save" Label="Save" IsEnabled="{x:Bind IsNotCurrentlyLoading, Mode=OneWay}"/>
+                        <AppBarButton x:Name="SavePlaylistButton" Click="{x:Bind OpenSaveDialog}" Icon="Save" Label="Save" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
                     </ListBoxItem>
                     <ListBoxItem>
-                        <AppBarButton x:Name="ClearPlaylistButton" Click="{x:Bind ClearPlaylist}" Icon="Delete" Label="Clear" IsEnabled="{x:Bind IsNotCurrentlyLoading, Mode=OneWay}"/>
+                        <AppBarButton x:Name="ClearPlaylistButton" Click="{x:Bind ClearPlaylist}" Icon="Delete" Label="Clear" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
                     </ListBoxItem>
                 </ListBox>
             </SplitView.Pane>
@@ -59,11 +59,13 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="300" HorizontalAlignment="Center" Margin="0,0,0,24" Grid.Column="0"/>
+            <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" MaxHeight="300" HorizontalAlignment="Center" Margin="0,0,0,24" Grid.Column="0"/>
             <SymbolIcon Symbol="Audio" Width="300" Height="300" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
         </Grid>
-        <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind IsNotCurrentlyLoading, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" Visibility="{x:Bind IsNotCurrentlyLoading, Converter={StaticResource BooleanToVisibilityInversionConverter}, Mode=OneWay}" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True"/>
-        <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
+        
+        <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" RelativePanel.AlignLeftWith="FileCommand" RelativePanel.AlignRightWithPanel="True"/>
+        
+        <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer" Visibility="{x:Bind player.HasItemsInPlaylist, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="200"/>
@@ -73,7 +75,8 @@
             <TextBlock Text="Album" Padding="24,0" Grid.Column="1"/>
             <TextBlock Text="Artist" Padding="24,0" Grid.Column="2"/>
         </Grid>
-        <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
+        
+        <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PlaylistItem">
                     <Grid>
@@ -117,13 +120,13 @@
             <AppBarButton Click="{x:Bind RW}" Icon="Previous" Label="Rewind"/>
             <AppBarButton Click="{x:Bind TogglePlayPause}" Label="Play" IsEnabled="{x:Bind player.IsWaiting, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}">
                 <StackPanel>
-                    <ProgressRing IsActive="{x:Bind player.IsWaiting, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-                    <SymbolIcon Symbol="{x:Bind player.IsPlaying, Converter={StaticResource PlayingToSymbolConverter}, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BooleanToVisibilityInversionConverter}, Mode=OneWay}"></SymbolIcon>
+                    <ProgressRing IsActive="{x:Bind player.IsWaiting, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <SymbolIcon Symbol="{x:Bind player.IsPlaying, Converter={StaticResource PlayingToSymbolConverter}, Mode=OneWay}" Visibility="{x:Bind player.IsWaiting, Converter={StaticResource BoolToVisibilityInversionConverter}, Mode=OneWay}"></SymbolIcon>
                 </StackPanel>
             </AppBarButton>
             <AppBarButton Click="{x:Bind FF}" Icon="Next" Label="Fast Forward"/>
             <AppBarSeparator/>
-            <AppBarButton Click="{x:Bind ToggleShuffle}" Label="Shuffle" Opacity="{x:Bind player.IsShuffling, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}">
+            <AppBarButton Click="{x:Bind ToggleShuffle}" Label="Shuffle" Opacity="{x:Bind player.IsShuffling, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}">
                 <SymbolIcon Symbol="Shuffle"></SymbolIcon>
             </AppBarButton>
             <AppBarButton Click="{x:Bind ToggleRepeatMode}" Label="Repeat Mode" Opacity="{x:Bind player.RepeatMode, Converter={StaticResource ZeroModeToOpacityConverter}, Mode=OneWay}">
