@@ -54,7 +54,7 @@
                 </ListView>
             </SplitView.Content>
         </SplitView>
-        
+
         <Grid x:Name="CoverImageContainer" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -62,7 +62,7 @@
             <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="300" HorizontalAlignment="Center" Margin="0,0,0,24" Grid.Column="0"/>
             <SymbolIcon Symbol="Audio" Width="300" Height="300" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
         </Grid>
-        
+        <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind IsNotCurrentlyLoading, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" Visibility="{x:Bind IsNotCurrentlyLoading, Converter={StaticResource BooleanToVisibilityInversionConverter}, Mode=OneWay}" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True"/>
         <Grid x:Name="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="CoverImageContainer" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>
@@ -73,7 +73,6 @@
             <TextBlock Text="Album" Padding="24,0" Grid.Column="1"/>
             <TextBlock Text="Artist" Padding="24,0" Grid.Column="2"/>
         </Grid>
-        
         <ListView x:Name="playlistUI" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" RelativePanel.Below="PlaylistLabels" RelativePanel.RightOf="FileCommand" RelativePanel.AlignRightWithPanel="True" RelativePanel.Above="ProgressBar">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:PlaylistItem">
@@ -96,14 +95,14 @@
         <CommandBar x:Name="Transport" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
 
             <CommandBar.Content>
-                <Grid VerticalAlignment="Stretch" ColumnSpacing="12" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
+                <Grid VerticalAlignment="Stretch" ColumnSpacing="12" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" MaxWidth="750">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Grid.Column="0"/>
                     <SymbolIcon Symbol="Audio" Width="48" Height="48" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" Grid.Column="0"/>
