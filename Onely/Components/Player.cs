@@ -267,6 +267,8 @@ namespace Onely
                 ClearPlayer();
             }
             Playlist.RemoveAt(index);
+            if (Playlist.Items.Count() < 1)
+                return;
             if ((player.Source == null) && (Playlist.SelectedItem != null))
             {
                 player.Source = Playlist.SelectedItem.Source;
@@ -279,43 +281,43 @@ namespace Onely
             if (audoFiles.Count() > 0)
             {
                 bool loaded = await Playlist.LoadFiles(audoFiles, imageFiles);
-                if (loaded && player.Source == null)
-                {
-                    NowPlaying = Playlist.Items[0];
-                    player.Source = NowPlaying.Source;
-                    TargetIndex = 0;
-                }
+                UpdateOnPlaylistLoad(loaded);
             }
         }
 
         public async void LoadPlaylist(int id)
         {
             bool loaded = await Playlist.LoadNew(id);
-            if (loaded)
-            {
-                UpdateOnPlaylistLoad();
-            }
+            UpdateOnPlaylistLoad(loaded);
         }
 
         public async void LoadDefaultPlaylist()
         {
             bool loaded = await Playlist.LoadDefault();
-            if (loaded)
-            {
-                UpdateOnPlaylistLoad();   
-            }
+            UpdateOnPlaylistLoad(loaded);   
         }
 
-        private void UpdateOnPlaylistLoad()
+        private void UpdateOnPlaylistLoad(bool didLoad)
         {
-            if (player.Source != null)
-                return;
-            NowPlaying = Playlist.Items[0];
-            TargetIndex = 0;
-            if (NowPlaying != null)
+            if (didLoad)
             {
-                player.Source = NowPlaying.Source;
+                if (player.Source != null)
+                    return;
+                if (Playlist.Items.Count() == 0)
+                {
+                    isWaiting = false;
+                    return;
+                }
+                NowPlaying = Playlist.Items[0];
+                TargetIndex = 0;
+                if (NowPlaying != null)
+                {
+                    player.Source = NowPlaying.Source;
+                    return;
+                }
             }
+            // prevent endless waiting messages when there's no playlist
+            IsWaiting = false;
         }
 
         public int SavePlaylist(string name)

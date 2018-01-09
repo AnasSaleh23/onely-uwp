@@ -96,7 +96,9 @@ namespace Onely
 
             item.Source.Dispose();
             Items.RemoveAt(index);
-            if (SelectedIndex >= index)
+            if (Items.Count() < 1)
+                return;
+            if (SelectedIndex >= index && SelectedIndex > 0)
             {
                 SelectedIndex--;
             }
