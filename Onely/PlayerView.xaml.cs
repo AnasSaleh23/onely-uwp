@@ -264,5 +264,15 @@ namespace Onely
             }
             // name already exists
         }
+
+        private void TogglePane()
+        {
+            FileCommand.IsPaneOpen = !FileCommand.IsPaneOpen;
+        }
+
+        private void ToggleShowPlaylists()
+        {
+            TogglePane();
+        }
     }
 }

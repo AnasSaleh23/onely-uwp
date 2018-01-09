@@ -14,17 +14,31 @@ namespace Onely
     {
         public async static Task<PlaylistItem> LoadFromFile(StorageFile file)
         {
-            var source = MediaSource.CreateFromStorageFile(file);
-            var info = await Task.Run(() => TagManager.ReadFile(file));
-            var tags = info.Tag;
-            BitmapImage cover = await GetCoverImageFromPicture(tags.Image);
-            return new PlaylistItem(file.Path, source, tags, cover);
+            try
+            {
+                var source = MediaSource.CreateFromStorageFile(file);
+                var info = await Task.Run(() => TagManager.ReadFile(file));
+                var tags = info.Tag;
+                BitmapImage cover = await GetCoverImageFromPicture(tags.Image);
+                return new PlaylistItem(file.Path, source, tags, cover);
+            } catch(Exception e)
+            {
+                return null;
+            }
+            
+            
         }
 
         public async static Task<PlaylistItem> LoadFromPath(string p)
         {
-            var file = await StorageFile.GetFileFromPathAsync(p);
-            return await LoadFromFile(file);
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(p);
+                return await LoadFromFile(file);
+            } catch(Exception e)
+            {
+                return null;
+            }
         }
 
         private static async Task<BitmapImage> GetCoverImageFromPicture(Picture picture)
