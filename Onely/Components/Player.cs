@@ -107,6 +107,23 @@ namespace Onely
             }
         }
 
+        private string playlistName;
+        public string PlaylistName
+        {
+            get
+            {
+                if (this.playlistName != "Default")
+                {
+                    return this.playlistName;
+                }
+                return String.Empty;
+            }
+            set
+            {
+                SetProperty(this.playlistName, value, () => this.playlistName = value);
+            }
+        }
+
         public Player()
         {
             player = new MediaPlayer
@@ -358,6 +375,7 @@ namespace Onely
             if (didLoad)
             {
                 HasItemsInPlaylist = true;
+                PlaylistName = Playlist.Name;
                 if (player.Source != null)
                     return;
                 NowPlaying = Playlist.Items[0];

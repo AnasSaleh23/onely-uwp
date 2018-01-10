@@ -108,7 +108,7 @@
 
         <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="False" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
-                <TextBox x:Name="SavedPlaylistName" Text="Enter Name" />
+                <TextBox x:Name="SavedPlaylistName" Text="{x:Bind player.PlaylistName, Mode=OneWay}" />
             </StackPanel>
         </ContentDialog>
 
