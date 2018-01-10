@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Onely"
+    xmlns:oe="using:Onely.Elements"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:oconverters="using:Onely.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,7 +29,7 @@
     
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop" KeyUp="Panel_KeyUp">
 
-        <StackPanel Orientation="Vertical" Padding="70,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWith="Transport">
+        <StackPanel x:Name="PlaylistLabelContainer" Orientation="Vertical" Padding="70,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
             <Grid x:Name="CoverImageContainer">
                 <Grid.ColumnDefinitions>
@@ -38,7 +39,7 @@
                 <SymbolIcon Symbol="Audio" Width="300" Height="300" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
             </Grid>
 
-            <Grid x:Name="PlaylistLabels" Visibility="{x:Bind player.HasItemsInPlaylist, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+            <Grid x:Name="PlaylistLabels" Visibility="{x:Bind player.Playlist.HasItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="200"/>
@@ -49,7 +50,10 @@
                 <TextBlock Text="Artist" Padding="24,0" Grid.Column="2"/>
             </Grid>
 
-            <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}">
+        </StackPanel>
+
+        <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="PlaylistLabelContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="70,0,0,0">
+            <ListView x:Name="PlaylistView" Height="{Binding ElementName=PlaylistContainer, Path=ActualHeight}" Padding="0,0,0,40" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlaylistItem">
                         <Grid>
@@ -66,7 +70,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackPanel>
-
+        
         <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="70" OpenPaneLength="400">
 
             <SplitView.Pane>
@@ -85,19 +89,15 @@
                     <ListBox x:Name="PlaylistMenu" ScrollViewer.VerticalScrollMode="Auto" ItemsSource="{x:Bind SavedPlaylists, Mode=OneWay}" Grid.Column="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="local:PlaylistReference">
-                                <Grid>
+                                <Grid HorizontalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{x:Bind Name, Mode=OneWay}" Name="{x:Bind Id, Mode=OneWay}" Grid.Column="0"/>
-                                    <Button Grid.Column="1" AccessKey="{x:Bind Id, Mode=OneWay}">
-                                        <SymbolIcon Symbol="Add" Grid.Column="1"/>
-                                    </Button>
-                                    <Button Grid.Column="2" AccessKey="{x:Bind Id, Mode=OneWay}">
-                                        <SymbolIcon Symbol="Delete" Grid.Column="2"/>
-                                    </Button>
+                                    <oe:PlaylistOpenButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
+                                    <oe:PlaylistAppendButton Label="Add" Icon="Add" Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist"/>
+                                    <oe:PlaylistDeleteButton Label="Delete" Icon="Delete" Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="DeletePlaylist"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -106,9 +106,10 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="False" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
+        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="True" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
-                <TextBox x:Name="SavedPlaylistName" Text="{x:Bind player.PlaylistName, Mode=OneWay}" />
+                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" />
+                
             </StackPanel>
         </ContentDialog>
 
@@ -156,7 +157,7 @@
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
                 <AppBarSeparator/>
-                <AppBarButton Click="{x:Bind ToggleShuffle}" Icon="Shuffle" Label="Shuffle" Opacity="{x:Bind player.IsShuffling, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}">
+                <AppBarButton Click="{x:Bind ToggleShuffle}" Icon="Shuffle" Label="Shuffle" Opacity="{x:Bind player.Playlist.Shuffle, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}">
                     <AppBarButton.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="S" />
                     </AppBarButton.KeyboardAccelerators>

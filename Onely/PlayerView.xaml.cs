@@ -13,6 +13,7 @@ using System.Diagnostics;
 using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.Foundation;
+using Onely.Elements;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -40,6 +41,7 @@ namespace Onely
             player.LoadDefaultPlaylist();
             mediaPlayerElement.SetMediaPlayer(player.MediaPlayer);
             SavedPlaylists = PlaylistStatic.GetSavedPlaylists();
+            Debug.WriteLine(SavedPlaylists[0].Name);
             Windows.ApplicationModel.Core.CoreApplication.Suspending += (ss, ee) =>
             {
                 player.Playlist.SaveDefault();
@@ -265,7 +267,58 @@ namespace Onely
 
         private void SavePlaylist(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (String.IsNullOrEmpty(player.Playlist.Name))
+            {
+                var name = SavePlaylistName.Text;
+                if (name.Length < 1)
+                {
+                    // please enter a name
+                    // await SavePlaylistDialog.ShowAsync();
+                    return;
+                }
+                var id = player.SavePlaylist(name);
+                if (id == -1)
+                {
+                    // name was already taken
+                    // await SavePlaylistDialog.ShowAsync();
+                    return;
+                }
+                SavedPlaylists.Add(new PlaylistReference(id, name));
+                return;
+            }
+            player.SavePlaylist(player.Playlist.Name);
+        }
 
+        private void DeletePlaylist(object sender, RoutedEventArgs e)
+        {
+            var element = (PlaylistDeleteButton)sender;
+            int id = int.Parse(element.PlaylistId);
+            // should ask first
+            PlaylistStatic.DeletePlaylistById(id);
+            foreach(var playlist in SavedPlaylists)
+            {
+                if (playlist.Id == id)
+                {
+                    SavedPlaylists.Remove(playlist);
+                    return;
+                }
+            }
+        }
+
+        private void OpenPlaylist(object sender, RoutedEventArgs e)
+        {
+            var element = (PlaylistOpenButton)sender;
+            int id = int.Parse(element.PlaylistId);
+            player.LoadPlaylist(id);
+            FileCommand.IsPaneOpen = false;
+        }
+
+        private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
+        {
+            var element = (PlaylistAppendButton)sender;
+            int id = int.Parse(element.PlaylistId);
+            player.AddPlaylistToExistingPlaylist(id);
+            FileCommand.IsPaneOpen = false;
         }
     }
 }

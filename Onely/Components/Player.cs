@@ -77,26 +77,6 @@ namespace Onely
             }
         }
 
-        private bool isShuffling = false;
-        public bool IsShuffling
-        {
-            get => this.isShuffling;
-            set
-            {
-                SetProperty(this.isShuffling, value, () => this.isShuffling = value);
-            }
-        }
-
-        private bool hasItemsInPlaylist;
-        public bool HasItemsInPlaylist
-        {
-            get => this.hasItemsInPlaylist;
-            set
-            {
-                SetProperty(this.hasItemsInPlaylist, value, () => this.hasItemsInPlaylist = value);
-            }
-        }
-
         private int repeatMode = 0;
         public int RepeatMode
         {
@@ -104,23 +84,6 @@ namespace Onely
             set
             {
                 SetProperty(this.repeatMode, value, () => this.repeatMode = value);
-            }
-        }
-
-        private string playlistName;
-        public string PlaylistName
-        {
-            get
-            {
-                if (this.playlistName != "Default")
-                {
-                    return this.playlistName;
-                }
-                return String.Empty;
-            }
-            set
-            {
-                SetProperty(this.playlistName, value, () => this.playlistName = value);
             }
         }
 
@@ -280,7 +243,7 @@ namespace Onely
 
         public void ToggleShuffle()
         {
-            IsShuffling = Playlist.Shuffle = !Playlist.Shuffle;
+            Playlist.Shuffle = !Playlist.Shuffle;
         }
 
 
@@ -289,6 +252,7 @@ namespace Onely
             Pause();
             player.Source = null;
             NowPlaying = null;
+            PlayProgress = 0;
         }
 
         public void ClearPlaylist()
@@ -309,7 +273,6 @@ namespace Onely
             var numRemainingItems = Playlist.Items.Count();
             if (numRemainingItems < 1)
             {
-                HasItemsInPlaylist = false;
                 NowPlaying = null;
                 return;
             }
@@ -343,6 +306,7 @@ namespace Onely
         {
             IsBusy = true;
             bool loaded = await Playlist.ClearAndLoadNew(id);
+            ClearPlayer();
             UpdateOnPlaylistLoad(loaded);
         }
 
@@ -357,6 +321,7 @@ namespace Onely
         {
             IsBusy = true;
             bool loaded = await Playlist.LoadDefault();
+            ClearPlayer();
             UpdateOnPlaylistLoad(loaded);   
         }
 
@@ -364,22 +329,19 @@ namespace Onely
         {
             IsBusy = false;
 
-            if (Playlist.Items.Count() == 0)
+            if (!Playlist.HasItems)
             {
                 IsWaiting = false;
-                HasItemsInPlaylist = false;
                 ClearPlayer();
                 return;
             }
 
             if (didLoad)
             {
-                HasItemsInPlaylist = true;
-                PlaylistName = Playlist.Name;
                 if (player.Source != null)
                     return;
-                NowPlaying = Playlist.Items[0];
-                TargetIndex = 0;
+                NowPlaying = Playlist.SelectedItem;
+                TargetIndex = Playlist.SelectedIndex;
                 if (NowPlaying != null)
                 {
                     player.Source = NowPlaying.Source;
@@ -392,7 +354,8 @@ namespace Onely
 
         public int SavePlaylist(string name)
         {
-            return Playlist.Save(name);
+            var id = Playlist.Save(name);
+            return id;
         }
     }
 }

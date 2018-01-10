@@ -8,10 +8,43 @@ using Windows.Storage;
 
 namespace Onely
 {
-    public class Playlist
+    public class Playlist :  NotificationBase
     {
-        public int Id = -1;
-        public string Name = String.Empty;
+        private int id = -1;
+        public int Id {
+            get
+            {
+                return this.id;
+            }
+            set
+            {
+                SetProperty(this.id, value, () => this.id = value);
+            }
+        }
+        private string name = String.Empty;
+        public string Name
+        {
+            get
+            {
+                return this.name;
+            }
+            set
+            {
+                SetProperty(this.name, value, () => this.name = value);
+            }
+        }
+        private bool hasItems = false;
+        public bool HasItems
+        {
+            get
+            {
+                return this.hasItems;
+            }
+            set
+            {
+                SetProperty(this.hasItems, value, () => this.hasItems = value);
+            }
+        }
         public ObservableCollection<PlaylistItem> Items { get; set; }
         private List<AlbumCover> AlbumCovers;
         public List<int> RandomIndexes { get; set; }
@@ -43,7 +76,7 @@ namespace Onely
                 {
                     this.GenerateRandomIndexes();
                 }
-                this.shuffle = value;
+                SetProperty(this.shuffle, value, () => this.shuffle = value);
             }
         }
 
@@ -56,12 +89,6 @@ namespace Onely
             Shuffle = false;
             RandomIndexes = new List<int>();
             AlbumCovers = new List<AlbumCover>();
-        }
-
-        public Playlist(int id, string name)
-        {
-            Id = id;
-            Name = name;
         }
 
         public void PrepareForReorder()
@@ -97,7 +124,10 @@ namespace Onely
             item.Source.Dispose();
             Items.RemoveAt(index);
             if (Items.Count() < 1)
+            {
+                HasItems = false;
                 return;
+            }
             if (SelectedIndex >= index && SelectedIndex > 0)
             {
                 SelectedIndex--;
@@ -123,6 +153,8 @@ namespace Onely
             }
             Items.Clear();
             AlbumCovers.Clear();
+            SelectedIndex = -1;
+            HasItems = false;
         }
 
         public PlaylistItem SetCurrentPositionAndGetItem(int index)
@@ -211,7 +243,10 @@ namespace Onely
         public async Task<bool> LoadDefault()
         {
             var id = PlaylistStatic.GetDefaultPlaylistId();
-            return await ClearAndLoadNew(id);
+            bool loaded = await ClearAndLoadNew(id);
+            Name = null;
+            Id = -1;
+            return loaded;
         }
 
         public async Task<bool> LoadNew(int id)
@@ -221,10 +256,9 @@ namespace Onely
                 return false;
             Name = name;
             Id = id;
-            List<PlaylistItem> items = await PlaylistItemStatic.RetrievePlaylistItemsByPlaylistId(id);
-            if (items == null)
-                return true;
 
+            List<PlaylistItem> items = await PlaylistItemStatic.RetrievePlaylistItemsByPlaylistId(id);
+   
             foreach (var item in items)
             {
                 Add(item);
@@ -233,6 +267,14 @@ namespace Onely
             {
                 GenerateRandomIndexes();
             }
+            if (Items.Count() > 0)
+            {
+                HasItems = true;
+                if (SelectedIndex == -1)
+                    SelectedIndex = 0;
+
+            } else
+                HasItems = false;
             return true;
         }
 
@@ -277,6 +319,15 @@ namespace Onely
             if (Shuffle)
             {
                 GenerateRandomIndexes();
+            }
+
+            if (Items.Count() > 0)
+                HasItems = true;
+            else
+                HasItems = false;
+            if (SelectedIndex == -1)
+            {
+                SelectedIndex = 0;
             }
             return true;
         }

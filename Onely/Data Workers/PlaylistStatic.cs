@@ -34,15 +34,14 @@ namespace Onely
         {
             using (SqliteConnection db = OnelyDB.Open())
             {
+                PlaylistItemStatic.DeleteBasedOnPlaylistId(id, db);
                 SqliteCommand command = new SqliteCommand
                 {
                     Connection = db,
-                    CommandText = "DELETE FROM playlist_items WHERE playlist_id=@ID"
+                    CommandText = "DELETE FROM playlists WHERE id=@ID"
                 };
                 command.Parameters.AddWithValue("@ID", id);
                 OnelyDB.ExecuteReader(command);
-
-                PlaylistItemStatic.DeleteBasedOnPlaylistId(id, db);
 
                 OnelyDB.Close(db);
             }
@@ -82,16 +81,15 @@ namespace Onely
                 SqliteCommand command;
                 if (playlist.Id == -1)
                 {
+                    // Is name taken?
                     command = new SqliteCommand
                     {
                         Connection = db,
-                        CommandText = "INSERT INTO playlists(name) VALUES (@Name)"
+                        CommandText = "SELECT id FROM playlists WHERE name=@Name"
                     };
                     command.Parameters.AddWithValue("@Name", name);
-                    try
-                    {
-                        command.ExecuteReader();
-                    } catch(Exception e)
+                    var res = OnelyDB.ExecuteReader(command);
+                    if (res.HasRows)
                     {
                         return -1;
                     }
@@ -99,9 +97,12 @@ namespace Onely
                     command = new SqliteCommand
                     {
                         Connection = db,
-                        CommandText = "SELECT last_insert_rowid()"
+                        CommandText = "INSERT INTO playlists(name) VALUES (@Name)"
                     };
-                    playlist.Id = (int)(long)command.ExecuteScalar();
+                    command.Parameters.AddWithValue("@Name", name);
+                    OnelyDB.ExecuteReader(command);
+
+                    playlist.Id = OnelyDB.GetLastInsertId(db);
                 }
                 else
                 {

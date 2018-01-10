@@ -46,5 +46,24 @@ namespace Onely
                 return null;
             }
         }
+
+        public static int GetLastInsertId(SqliteConnection db)
+        {
+            SqliteCommand command = new SqliteCommand
+            {
+                Connection = db,
+                CommandText = "SELECT last_insert_rowid()"
+            };
+            try
+            {
+                int id = (int)(long)command.ExecuteScalar();
+                return id;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return -1;
+            }
+        }
     }
 }
