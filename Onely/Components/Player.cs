@@ -140,7 +140,7 @@ namespace Onely
 
         public void FF()
         {
-            if (!Advance())
+            if (!Advance() && IsPlaying)
             {
                 Play(Playlist.Reset());
             }
@@ -168,6 +168,7 @@ namespace Onely
             if ((session.Position.TotalSeconds > 2) || (Playlist.SelectedIndex == 0))
             {
                 session.Position = TimeSpan.FromSeconds(0);
+                Play();
                 return;
             }
             var prev = Playlist.GetPreviousIndex();

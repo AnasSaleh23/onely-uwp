@@ -6,12 +6,12 @@ namespace Onely
 {
     public static class PlaylistStatic
     {
-        public static List<Playlist> GetSavedPlaylists()
+        public static PlaylistReferenceCollection<PlaylistReference> GetSavedPlaylists()
         {
             using (SqliteConnection db = OnelyDB.Open())
             {
 
-                List<Playlist> playlists = new List<Playlist>(); 
+                PlaylistReferenceCollection<PlaylistReference> playlists = new PlaylistReferenceCollection<PlaylistReference>(); 
                 SqliteCommand command = new SqliteCommand
                 {
                     Connection = db,
@@ -21,7 +21,7 @@ namespace Onely
 
                 while (res.Read())
                 {
-                    playlists.Add(new Playlist(res.GetInt32(0), res.GetString(1)));
+                    playlists.Add(new PlaylistReference(res.GetInt32(0), res.GetString(1)));
                 }
 
                 db.Close();

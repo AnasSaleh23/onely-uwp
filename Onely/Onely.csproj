@@ -96,6 +96,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\PlaylistReference.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Data Workers\PlaylistItemStatic.cs" />
     <Compile Include="Base\NotificationBase.cs" />

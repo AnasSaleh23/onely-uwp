@@ -31,7 +31,7 @@ namespace Onely
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
 
-        private List<Playlist> SavedPlaylists;
+        private PlaylistReferenceCollection<PlaylistReference> SavedPlaylists;
 
         public PlayerView()
         {
@@ -232,27 +232,15 @@ namespace Onely
                     }
                     break;
 
-                case VirtualKey.Space:
-                    TogglePlayPause();
-                    break;
-
-                case VirtualKey.Left:
-                    RW();
-                    break;
-
-                case VirtualKey.Right:
-                    FF();
-                    break;
-
                 default:
                     break;
             }
         }
 
         // TODO: save / rename playlists
-        private string OpenSaveDialog()
+        private async void OpenSaveDialog()
         {
-            return String.Empty;
+            await SavePlaylistDialog.ShowAsync();
         }
 
         private void SavePlaylist(string name)
@@ -273,6 +261,11 @@ namespace Onely
         private void ToggleShowPlaylists()
         {
             TogglePane();
+        }
+
+        private void SavePlaylist(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+
         }
     }
 }
