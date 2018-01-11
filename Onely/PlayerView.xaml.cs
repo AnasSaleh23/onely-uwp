@@ -14,6 +14,7 @@ using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.Foundation;
 using Onely.Elements;
+using System.ComponentModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -23,11 +24,53 @@ namespace Onely
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     
-    public sealed partial class PlayerView : Page
+    public sealed partial class PlayerView : Page, INotifyPropertyChanged
     {
         private Player player;
         
         private bool ReorderingInitiated = false;
+        
+        private string playlistNameToSave = String.Empty;
+        public string PlaylistNameToSave
+        {
+            get => this.playlistNameToSave;
+            set
+            {
+                this.playlistNameToSave = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("PlaylistNameToSave"));
+                }
+            }
+        }
+
+        private bool playlistNameTaken = false;
+        public bool PlaylistNameTaken
+        {
+            get => this.playlistNameTaken;
+            set
+            {
+                this.playlistNameTaken = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("PlaylistNameTaken"));
+                }
+            }
+        }
+
+        private bool okToSave = false;
+        public bool OkToSave
+        {
+            get => this.okToSave;
+            set
+            {
+                this.okToSave = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("OkToSave"));
+                }
+            }
+        }
         
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
@@ -247,6 +290,7 @@ namespace Onely
         
         private async void OpenSaveDialog()
         {
+            CheckIfNameTaken();
             await SavePlaylistDialog.ShowAsync();
         }
 
@@ -265,7 +309,7 @@ namespace Onely
             string name;
             if (String.IsNullOrEmpty(player.Playlist.Name))
             {
-                name = SavePlaylistName.Text;
+                name = PlaylistNameToSave;
                 if (name.Length < 1)
                 {
                     // empty name should be captured in view
@@ -279,10 +323,12 @@ namespace Onely
                     return;
                 }
                 SavedPlaylists.Add(new PlaylistReference(id, name));
-                NameTakenError.Visibility = Visibility.Collapsed;
                 return;
             }
-            name = CurrentPlaylistName.Text;
+            if (PlaylistNameToSave == null)
+                name = player.Playlist.Name;
+            else
+                name = PlaylistNameToSave;
             if (name != player.Playlist.Name)
             {
                 // renaming or saving as...
@@ -292,19 +338,26 @@ namespace Onely
 
         private void CheckIfNameTaken()
         {
-            var name = SavePlaylistName.Text;
+            var name = PlaylistNameToSave;
+            if (!String.IsNullOrEmpty(player.Playlist.Name))
+            {
+                PlaylistNameTaken = false;
+                if (name.Length > 0)
+                    OkToSave = true;
+                return;
+            }
+            
             foreach(var playlist in SavedPlaylists)
             {
                 if (name == playlist.Name)
                 {
-                    NameTakenError.Visibility = Visibility.Visible;
-                    SavePlaylistDialog.IsPrimaryButtonEnabled = false;
-                    return;
+                    PlaylistNameTaken = true;
+                    OkToSave = false;
                 }
             }
-            NameTakenError.Visibility = Visibility.Collapsed;
+            PlaylistNameTaken = false;
             if (name.Length > 0)
-                SavePlaylistDialog.IsPrimaryButtonEnabled = true;
+                OkToSave = true;
             return;
         }
 
@@ -329,6 +382,7 @@ namespace Onely
             var element = (PlaylistOpenButton)sender;
             int id = int.Parse(element.PlaylistId);
             player.LoadPlaylist(id);
+            PlaylistNameToSave = player.Playlist.Name;
             FileCommand.IsPaneOpen = false;
         }
 
@@ -339,5 +393,7 @@ namespace Onely
             player.AddPlaylistToExistingPlaylist(id);
             FileCommand.IsPaneOpen = false;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

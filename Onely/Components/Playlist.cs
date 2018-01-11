@@ -337,6 +337,16 @@ namespace Onely
             return PlaylistStatic.Save(this, name);
         }
 
+        public int SaveAs(string name)
+        {
+            var currentName = Name;
+            Name = null;
+            var id = Save(name);
+            if (id == -1)
+                Name = currentName;
+            return id;
+        }
+
         public void SaveDefault()
         {
             var currentId = Id;

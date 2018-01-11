@@ -108,13 +108,13 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{Binding ElementName=SavePlaylistName, Path=Text, Converter={StaticResource EmptyStringToBoolConverter}}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
+        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{x:Bind OkToSave, Mode=OneWay}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
-                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" KeyUp="{x:Bind CheckIfNameTaken}" />
+                <TextBox x:Name="SavePlaylistName" Text="{x:Bind PlaylistNameToSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" TextChanged="{x:Bind CheckIfNameTaken}" />
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, Mode=OneWay}">
-                    <TextBlock x:Name="CurrentPlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" />
+                    <TextBlock x:Name="CurrentPlaylistName" Text="{x:Bind PlaylistNameToSave, Mode=OneWay}" />
                 </StackPanel>
-                <TextBlock x:Name="NameTakenError" Text="Name already taken." Visibility="Collapsed"/>
+                <TextBlock x:Name="NameTakenError" Text="Name already taken." Visibility="{x:Bind PlaylistNameTaken, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
             </StackPanel>
         </ContentDialog>
 
