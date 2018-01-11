@@ -13,22 +13,14 @@ using Windows.UI.Input;
 using Windows.Foundation;
 using Onely.AttachedProperties;
 using System.ComponentModel;
-using System.Diagnostics;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace Onely
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     
     public sealed partial class PlayerView : Page, INotifyPropertyChanged
     {
-        private Player player;
-        
-        private bool ReorderingInitiated = false;
-        
+
+        // Notifying properties
         private string playlistNameToSave = String.Empty;
         public string PlaylistNameToSave
         {
@@ -99,15 +91,16 @@ namespace Onely
             }
         }
 
+        // Private properties
         private bool okToDelete = false;
-
         private int itemToRemove = -1;
-
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
-
         private PlaylistReferenceCollection<PlaylistReference> SavedPlaylists;
+        private Player player;
+        private bool ReorderingInitiated = false;
 
+        // Constructor
         public PlayerView()
         {
             this.InitializeComponent();

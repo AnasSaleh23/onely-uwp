@@ -74,6 +74,7 @@ namespace Onely
                 Window.Current.Activate();
             }
 
+            // Style Title Bar
             var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
 
             titleBar.BackgroundColor = Windows.UI.Colors.DarkRed;
