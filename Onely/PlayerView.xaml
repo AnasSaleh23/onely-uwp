@@ -29,7 +29,7 @@
         </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
     
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop" KeyUp="Panel_KeyUp">
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
         <StackPanel x:Name="PlaylistLabelContainer" Orientation="Vertical" Padding="70,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
@@ -55,7 +55,7 @@
         </StackPanel>
 
         <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="PlaylistLabelContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="70,0,0,0">
-            <ListView x:Name="PlaylistView" Height="{Binding ElementName=PlaylistContainer, Path=ActualHeight}" Padding="0,0,0,40" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}">
+            <ListView x:Name="PlaylistView" Height="{Binding ElementName=PlaylistContainer, Path=ActualHeight}" Padding="0,0,0,40" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlaylistItem">
                         <Grid>
@@ -108,7 +108,7 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{x:Bind OkToSave, Mode=OneWay}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
+        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{x:Bind OkToSave, Mode=OneWay}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" DefaultButton="Primary" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
                 <TextBox x:Name="SavePlaylistName" Text="{x:Bind PlaylistNameToSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" TextChanged="{x:Bind CheckIfNameTaken}" />
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, Mode=OneWay}">

@@ -301,7 +301,7 @@ namespace Onely
             player.Playlist.SetSelectedIndexAfterReorder();
         }
 
-        private void Panel_KeyUp(object sender, KeyRoutedEventArgs e)
+        private void PlaylistList_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             switch (e.Key)
             {
@@ -324,6 +324,10 @@ namespace Onely
                     {
                         DeleteItem(player.TargetIndex);
                     }
+                    break;
+
+                case VirtualKey.Space:
+                    TogglePlayPause();
                     break;
 
                 default:
