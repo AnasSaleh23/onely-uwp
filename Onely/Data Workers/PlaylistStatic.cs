@@ -79,7 +79,7 @@ namespace Onely
             using (SqliteConnection db = OnelyDB.Open())
             {
                 SqliteCommand command;
-                if (playlist.Id == -1)
+                if (playlist.Name == null)
                 {
                     // Is name taken?
                     command = new SqliteCommand

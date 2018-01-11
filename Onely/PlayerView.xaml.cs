@@ -41,7 +41,6 @@ namespace Onely
             player.LoadDefaultPlaylist();
             mediaPlayerElement.SetMediaPlayer(player.MediaPlayer);
             SavedPlaylists = PlaylistStatic.GetSavedPlaylists();
-            Debug.WriteLine(SavedPlaylists[0].Name);
             Windows.ApplicationModel.Core.CoreApplication.Suspending += (ss, ee) =>
             {
                 player.Playlist.SaveDefault();
@@ -223,6 +222,13 @@ namespace Onely
                 case VirtualKey.Enter:
                     if (player.TargetIndex > -1)
                     {
+                        try
+                        {
+                            var item = player.Playlist.Items[player.TargetIndex];
+                        } catch(Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
                         Play(player.TargetIndex);
                     }
                     break;
@@ -238,21 +244,10 @@ namespace Onely
                     break;
             }
         }
-
-        // TODO: save / rename playlists
+        
         private async void OpenSaveDialog()
         {
             await SavePlaylistDialog.ShowAsync();
-        }
-
-        private void SavePlaylist(string name)
-        {
-            if (player.SavePlaylist(name) > -1)
-            {
-                SavedPlaylists = PlaylistStatic.GetSavedPlaylists();
-                return;
-            }
-            // name already exists
         }
 
         private void TogglePane()
@@ -267,26 +262,35 @@ namespace Onely
 
         private void SavePlaylist(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            string name;
             if (String.IsNullOrEmpty(player.Playlist.Name))
             {
-                var name = SavePlaylistName.Text;
+                name = SavePlaylistName.Text;
                 if (name.Length < 1)
                 {
-                    // please enter a name
-                    // await SavePlaylistDialog.ShowAsync();
+                    // empty name should be captured in view
                     return;
                 }
                 var id = player.SavePlaylist(name);
                 if (id == -1)
                 {
                     // name was already taken
-                    // await SavePlaylistDialog.ShowAsync();
+                    // need to notify
+                    
+                    NameTakenError.Visibility = Visibility.Visible;
                     return;
                 }
                 SavedPlaylists.Add(new PlaylistReference(id, name));
+                NameTakenError.Visibility = Visibility.Collapsed;
                 return;
             }
-            player.SavePlaylist(player.Playlist.Name);
+            name = CurrentPlaylistName.Text;
+            if (name != player.Playlist.Name)
+            {
+                // renaming or saving as...
+            }
+            player.SavePlaylist(name);
+            NameTakenError.Visibility = Visibility.Collapsed;
         }
 
         private void DeletePlaylist(object sender, RoutedEventArgs e)

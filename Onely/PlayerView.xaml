@@ -14,6 +14,8 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:BoolToObjectConverter x:Key="BoolToVisibilityInversionConverter" TrueValue="Collapsed" FalseValue="Visible"/>
         <converters:BoolToObjectConverter x:Key="BoolToOpacityConverter" TrueValue="1.0" FalseValue="0.3"/>
+        <converters:EmptyStringToObjectConverter x:Key="EmptyStringToBoolConverter" EmptyValue="False" NotEmptyValue="True"/>
+        <converters:EmptyStringToObjectConverter x:Key="EmptyStringToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <converters:EmptyCollectionToObjectConverter x:Key="EmptyCollectionToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <converters:EmptyObjectToObjectConverter x:Key="EmptyObjectToHiddenConverter" EmptyValue="Collapsed" NotEmptyValue="Visible"/>
         <oconverters:PlayingToSymbolConverter x:Key="PlayingToSymbolConverter"/>
@@ -71,7 +73,7 @@
             </ListView>
         </StackPanel>
         
-        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="70" OpenPaneLength="400">
+        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="70" OpenPaneLength="350">
 
             <SplitView.Pane>
                 <Grid>
@@ -80,7 +82,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Column="0">
-                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind ToggleShowPlaylists}" Visibility="{x:Bind SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}}"/>
+                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind ToggleShowPlaylists}" Visibility="{Binding SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}, Mode=OneWay}" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" AccessKey="L"/>
                         <AppBarButton x:Name="AddFilesButton" Click="{x:Bind AddFiles}" Icon="OpenFile" Label="Add Files" AccessKey="O"/>
                         <AppBarButton x:Name="AddFolderButton" Click="{x:Bind AddFolder}" Icon="Folder" Label="Add Folder" AccessKey="F"/>
                         <AppBarButton x:Name="SavePlaylistButton" Click="{x:Bind OpenSaveDialog}" Icon="Save" Label="Save" AccessKey="S" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
@@ -89,11 +91,11 @@
                     <ListBox x:Name="PlaylistMenu" ScrollViewer.VerticalScrollMode="Auto" ItemsSource="{x:Bind SavedPlaylists, Mode=OneWay}" Grid.Column="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="local:PlaylistReference">
-                                <Grid HorizontalAlignment="Stretch">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <oe:PlaylistOpenButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
                                     <oe:PlaylistAppendButton Label="Add" Icon="Add" Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist"/>
@@ -106,10 +108,13 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="True" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
+        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{Binding ElementName=SavePlaylistName, Path=Text, Converter={StaticResource EmptyStringToBoolConverter}}" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
-                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" />
-                
+                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" />
+                <StackPanel Orientation="Horizontal" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, Mode=OneWay}">
+                    <TextBlock x:Name="CurrentPlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" />
+                </StackPanel>
+                <TextBlock x:Name="NameTakenError" Text="Name already taken." Visibility="Collapsed"/>
             </StackPanel>
         </ContentDialog>
 
