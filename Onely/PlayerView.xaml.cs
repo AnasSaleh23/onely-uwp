@@ -113,7 +113,6 @@ namespace Onely
             this.InitializeComponent();
             player = new Player();
             player.LoadDefaultPlaylist();
-            mediaPlayerElement.SetMediaPlayer(player.MediaPlayer);
             SavedPlaylists = PlaylistStatic.GetSavedPlaylists();
             Windows.ApplicationModel.Core.CoreApplication.Suspending += (ss, ee) =>
             {
@@ -414,6 +413,14 @@ namespace Onely
             player.Playlist.SetSelectedIndexAfterReorder();
         }
 
+        private void ShowPlaylistFlyout(object sender, RightTappedRoutedEventArgs e)
+        {
+            ListView list = (ListView)sender;
+            RemoveItemFlyout.ShowAt(list, e.GetPosition(list));
+            var item = ((FrameworkElement)e.OriginalSource).DataContext as PlaylistItem;
+            itemToRemove = player.Playlist.Items.IndexOf(item);
+        }
+
         private void PlaylistList_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             switch (e.Key)
@@ -470,13 +477,6 @@ namespace Onely
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void ShowPlaylistFlyout(object sender, RightTappedRoutedEventArgs e)
-        {
-            ListView list = (ListView)sender;
-            RemoveItemFlyout.ShowAt(list, e.GetPosition(list));
-            var item = ((FrameworkElement)e.OriginalSource).DataContext as PlaylistItem;
-            itemToRemove = player.Playlist.Items.IndexOf(item);
-        }
+        
     }
 }

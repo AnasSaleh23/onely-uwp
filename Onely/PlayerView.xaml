@@ -31,10 +31,11 @@
 
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
-        <StackPanel x:Name="PlaylistLabelContainer" Orientation="Vertical" Padding="52,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+        <!-- Cover Image and Player busy indicator -->
+        <StackPanel x:Name="CoverImageContainer" Orientation="Vertical" Padding="52,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" />
 
-            <Grid x:Name="CoverImageContainer" Background="{ThemeResource SystemControlTransparentBrush}">
+            <Grid x:Name="CoverImageGrid" Background="{ThemeResource SystemControlTransparentBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
@@ -44,7 +45,8 @@
 
         </StackPanel>
 
-        <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="PlaylistLabelContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="52,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
+        <!-- Playlist -->
+        <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="CoverImageContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="52,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
 
             <Grid x:Name="PlaylistLabels" Visibility="{x:Bind player.Playlist.HasItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="0,2,0,2">
                 <Grid.ColumnDefinitions>
@@ -87,6 +89,7 @@
             </ListView>
         </StackPanel>
 
+        <!-- File and Playlist Menu -->
         <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="{x:Bind ShowOpenPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMode="CompactOverlay" CompactPaneLength="52" OpenPaneLength="350" RequestedTheme="Default" FontFamily="Segoe UI" PaneBackground="Transparent">
 
             <SplitView.Pane>
@@ -144,6 +147,7 @@
             </SplitView.Pane>
         </SplitView>
 
+        <!-- Content Dialogs for Saving and Deleting -->
         <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{x:Bind OkToSave, Mode=OneWay}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" DefaultButton="Primary" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
                 <TextBox x:Name="SavePlaylistName" Text="{x:Bind PlaylistNameToSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="{x:Bind CheckIfNameTaken}" />
@@ -160,6 +164,7 @@
             </StackPanel>
         </ContentDialog>
 
+        <!-- Player Transport Controls -->
         <StackPanel x:Name="Transport" Orientation="Vertical" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             
             <ProgressBar x:Name="PlayProgressBar" PointerPressed="ProgressBarSeek" PointerReleased="ProgressBarSeek" PointerEntered="{x:Bind CursorShowHand }" PointerExited="{x:Bind CursorShowArrow }" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" Background="{ThemeResource SystemControlBackgroundBaseMediumHighBrush }" Foreground="OrangeRed" />
@@ -215,7 +220,6 @@
             </Grid>
         </StackPanel>
 
-        <MediaPlayerElement x:Name="mediaPlayerElement" AreTransportControlsEnabled="False" RelativePanel.Below="Transport"/>
     </RelativePanel>
 
 </Page>
