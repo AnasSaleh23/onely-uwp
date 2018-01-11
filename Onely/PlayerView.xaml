@@ -8,8 +8,7 @@
     xmlns:oconverters="using:Onely.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    RequestedTheme="Dark">
+    mc:Ignorable="d">
     <Page.Resources>
         <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -30,7 +29,7 @@
         </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
 
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
         <StackPanel x:Name="PlaylistLabelContainer" Orientation="Vertical" Padding="52,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
             <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" />
@@ -39,13 +38,13 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" MaxHeight="350" HorizontalAlignment="Center" Margin="0,12,0,12" Grid.Column="0" VerticalAlignment="Center"/>
-                <SymbolIcon Symbol="Audio" Width="300" Height="300" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
+                <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Height="350" HorizontalAlignment="Center" Margin="0,12,0,12" Grid.Column="0" VerticalAlignment="Center"/>
+                <SymbolIcon Symbol="Audio" Width="350" Height="350" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
             </Grid>
 
         </StackPanel>
 
-        <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="PlaylistLabelContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="52,0,0,0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+        <StackPanel x:Name="PlaylistContainer" RelativePanel.Below="PlaylistLabelContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="52,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
 
             <Grid x:Name="PlaylistLabels" Visibility="{x:Bind player.Playlist.HasItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="0,2,0,2">
                 <Grid.ColumnDefinitions>
@@ -81,7 +80,7 @@
             </ListView>
         </StackPanel>
 
-        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="{x:Bind ShowOpenPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMode="CompactOverlay" CompactPaneLength="52" OpenPaneLength="350" RequestedTheme="Default" FontFamily="Segoe UI">
+        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="{x:Bind ShowOpenPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMode="CompactOverlay" CompactPaneLength="52" OpenPaneLength="350" RequestedTheme="Default" FontFamily="Segoe UI" PaneBackground="Transparent">
 
             <SplitView.Pane>
                 <Grid Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
@@ -158,7 +157,7 @@
             
             <ProgressBar x:Name="PlayProgressBar" PointerPressed="ProgressBarSeek" PointerReleased="ProgressBarSeek" PointerEntered="{x:Bind CursorShowHand }" PointerExited="{x:Bind CursorShowArrow }" Minimum="0" Maximum="100" Value="{x:Bind player.PlayProgress, Mode=OneWay}" Background="{ThemeResource SystemControlBackgroundBaseMediumHighBrush }" Foreground="OrangeRed" />
             
-            <Grid Height="48" VerticalAlignment="Stretch" x:Name="TransportControls" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+            <Grid Height="48" VerticalAlignment="Stretch" x:Name="TransportControls" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>

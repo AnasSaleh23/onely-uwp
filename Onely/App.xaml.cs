@@ -73,6 +73,12 @@ namespace Onely
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+
+            titleBar.BackgroundColor = Windows.UI.Colors.DarkRed;
+            titleBar.ButtonBackgroundColor = Windows.UI.Colors.DarkRed;
+            titleBar.ForegroundColor = Windows.UI.Colors.White;
         }
 
         /// <summary>
