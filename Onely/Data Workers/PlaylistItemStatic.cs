@@ -23,10 +23,9 @@ namespace Onely
                 return new PlaylistItem(file.Path, source, tags, cover);
             } catch(Exception e)
             {
+                Console.WriteLine(e);
                 return null;
             }
-            
-            
         }
 
         public async static Task<PlaylistItem> LoadFromPath(string p)
@@ -37,6 +36,7 @@ namespace Onely
                 return await LoadFromFile(file);
             } catch(Exception e)
             {
+                Console.WriteLine(e);
                 return null;
             }
         }

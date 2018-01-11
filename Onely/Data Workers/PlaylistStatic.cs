@@ -1,11 +1,11 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
-using System.Collections.Generic;
 
 namespace Onely
 {
     public static class PlaylistStatic
     {
+        public static string DefaultDBName = "|Onely-LastViewedPlaylist#|";
         public static PlaylistReferenceCollection<PlaylistReference> GetSavedPlaylists()
         {
             using (SqliteConnection db = OnelyDB.Open())
@@ -15,8 +15,9 @@ namespace Onely
                 SqliteCommand command = new SqliteCommand
                 {
                     Connection = db,
-                    CommandText = "SELECT id, name FROM playlists WHERE name != 'Default' ORDER BY name"
+                    CommandText = "SELECT id, name FROM playlists WHERE name != @Default ORDER BY name"
                 };
+                command.Parameters.AddWithValue("@Default", DefaultDBName);
                 var res = OnelyDB.ExecuteReader(command);
 
                 while (res.Read())
@@ -141,8 +142,9 @@ namespace Onely
                 SqliteCommand command = new SqliteCommand
                 {
                     Connection = db,
-                    CommandText = "SELECT id FROM playlists WHERE name='Default'"
+                    CommandText = "SELECT id FROM playlists WHERE name=@Default"
                 };
+                command.Parameters.AddWithValue("@Default", DefaultDBName);
                 var res = OnelyDB.ExecuteReader(command);
                 while (res.Read())
                 {
@@ -150,6 +152,13 @@ namespace Onely
                 }
                 return id;
             }
+        }
+
+        public static bool IsDefaultDB(string name)
+        {
+            if (name == DefaultDBName)
+                return true;
+            return false;
         }
     }
 }

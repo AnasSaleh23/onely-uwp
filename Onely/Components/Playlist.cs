@@ -358,7 +358,8 @@ namespace Onely
             var currentId = Id;
             var currentName = Name;
             Id = PlaylistStatic.GetDefaultPlaylistId();
-            Save("Default");
+            Name = null;
+            Save(PlaylistStatic.DefaultDBName);
             Id = currentId;
             currentName = Name;
         }
