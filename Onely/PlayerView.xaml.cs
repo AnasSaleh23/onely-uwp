@@ -13,6 +13,7 @@ using Windows.UI.Input;
 using Windows.Foundation;
 using Onely.AttachedProperties;
 using System.ComponentModel;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -100,6 +101,8 @@ namespace Onely
 
         private bool okToDelete = false;
 
+        private int itemToRemove = -1;
+
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
 
@@ -136,6 +139,14 @@ namespace Onely
         private void ClearPlaylist() => player.ClearPlaylist();
 
         private void DeleteItem(int index) => player.DeleteItem(index);
+
+        private void DeleteFlyoutItem()
+        {
+            if (itemToRemove < 0 || itemToRemove >= player.Playlist.Items.Count())
+                return;
+            player.DeleteItem(itemToRemove);
+            itemToRemove = -1;
+        }
 
         private void ToggleRepeatMode() => player.ToggleRepeatMode();
 
@@ -459,5 +470,13 @@ namespace Onely
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void ShowPlaylistFlyout(object sender, RightTappedRoutedEventArgs e)
+        {
+            ListView list = (ListView)sender;
+            RemoveItemFlyout.ShowAt(list, e.GetPosition(list));
+            var item = ((FrameworkElement)e.OriginalSource).DataContext as PlaylistItem;
+            itemToRemove = player.Playlist.Items.IndexOf(item);
+        }
     }
 }

@@ -57,12 +57,19 @@
                 <TextBlock Text="Artist" Padding="6,0" Grid.Column="2"/>
             </Grid>
 
-            <ListView x:Name="PlaylistView" Height="{Binding ElementName=PlaylistContainer, Path=ActualHeight}" Padding="0,0,0,50" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp">
+            <ListView x:Name="PlaylistView" Height="{Binding ElementName=PlaylistContainer, Path=ActualHeight}" Padding="0,0,0,50" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <ListView.Resources>
+                    <MenuFlyout x:Name="RemoveItemFlyout">
+                        <MenuFlyout.Items>
+                            <MenuFlyoutItem x:Name="Remove" Text="Remove" Click="{x:Bind DeleteFlyoutItem}"/>
+                        </MenuFlyout.Items>
+                    </MenuFlyout>
+                </ListView.Resources>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlaylistItem">
                         <Grid>
