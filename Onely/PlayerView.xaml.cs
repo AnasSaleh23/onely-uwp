@@ -289,15 +289,14 @@ namespace Onely
 
         private void SavePlaylist()
         {
-            string name;
+            string name = PlaylistNameToSave;
+            if (name.Length < 1)
+            {
+                // empty name should be captured in view
+                return;
+            }
             if (String.IsNullOrEmpty(player.Playlist.Name))
             {
-                name = PlaylistNameToSave;
-                if (name.Length < 1)
-                {
-                    // empty name should be captured in view
-                    return;
-                }
                 var id = player.SavePlaylist(name);
                 if (id == -1)
                 {
@@ -308,15 +307,14 @@ namespace Onely
                 SavedPlaylists.Add(new PlaylistReference(id, name));
                 return;
             }
-            if (PlaylistNameToSave == null)
-                name = player.Playlist.Name;
-            else
-                name = PlaylistNameToSave;
+
             if (name != player.Playlist.Name)
             {
-                // renaming or saving as...
-            }
-            player.SavePlaylist(name);
+                var newId = player.SavePlaylistAs(name);
+                SavedPlaylists.Add(new PlaylistReference(newId, name));
+            } 
+            else
+                player.SavePlaylist(name);
         }
 
         private void CheckIfNameTaken()

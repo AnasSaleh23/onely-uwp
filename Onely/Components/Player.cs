@@ -357,5 +357,11 @@ namespace Onely
             var id = Playlist.Save(name);
             return id;
         }
+
+        public int SavePlaylistAs(string name)
+        {
+            var id = Playlist.SaveAs(name);
+            return id;
+        }
     }
 }
