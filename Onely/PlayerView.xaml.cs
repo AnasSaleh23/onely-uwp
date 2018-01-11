@@ -99,18 +99,6 @@ namespace Onely
         }
 
         private bool okToDelete = false;
-        public bool OkToDelete
-        {
-            get => this.okToDelete;
-            set
-            {
-                this.okToDelete = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("OkToDelete"));
-                }
-            }
-        }
 
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
@@ -264,11 +252,20 @@ namespace Onely
             ShowOpenPane = false;
         }
 
-        private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
+        private void OpenPlaylist(object sender, TappedRoutedEventArgs e)
+        {
+            var info = GetPlaylistLabelsFromElement(sender);
+            player.LoadPlaylist(info.Item1);
+            PlaylistNameToSave = player.Playlist.Name;
+            ShowOpenPane = false;
+        }
+
+        private void AddToExistingPlaylist(object sender, TappedRoutedEventArgs e)
         {
             var info = GetPlaylistLabelsFromElement(sender);
             player.AddPlaylistToExistingPlaylist(info.Item1);
             ShowOpenPane = false;
+            e.Handled = true;
         }
 
         private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
@@ -346,23 +343,24 @@ namespace Onely
         // Deleting playlists
         private void ConfirmDelete()
         {
-            OkToDelete = true;
+            okToDelete = true;
         }
 
-        private async void DeletePlaylist(object sender, RoutedEventArgs e)
+        private async void DeletePlaylist(object sender, TappedRoutedEventArgs e)
         {
+            e.Handled = true;
             var info = GetPlaylistLabelsFromElement(sender);
             PlaylistToDelete = info.Item2;
             var id = info.Item1;
             await ConfirmDeleteDialog.ShowAsync();
-            if (!OkToDelete)
+            if (!okToDelete)
                 return;
             PlaylistStatic.DeletePlaylistById(id);
             if (id == player.Playlist.Id)
             {
                 player.Playlist.UpdateAfterDeletedFromDb();
             }
-            OkToDelete = false;
+            okToDelete = false;
             foreach(var playlist in SavedPlaylists)
             {
                 if (playlist.Id == id)
