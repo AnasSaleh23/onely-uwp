@@ -260,7 +260,7 @@ namespace Onely
             TogglePane();
         }
 
-        private void SavePlaylist(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void SavePlaylist()
         {
             string name;
             if (String.IsNullOrEmpty(player.Playlist.Name))
@@ -275,9 +275,7 @@ namespace Onely
                 if (id == -1)
                 {
                     // name was already taken
-                    // need to notify
-                    
-                    NameTakenError.Visibility = Visibility.Visible;
+                    // should be captured in view
                     return;
                 }
                 SavedPlaylists.Add(new PlaylistReference(id, name));
@@ -290,7 +288,24 @@ namespace Onely
                 // renaming or saving as...
             }
             player.SavePlaylist(name);
+        }
+
+        private void CheckIfNameTaken()
+        {
+            var name = SavePlaylistName.Text;
+            foreach(var playlist in SavedPlaylists)
+            {
+                if (name == playlist.Name)
+                {
+                    NameTakenError.Visibility = Visibility.Visible;
+                    SavePlaylistDialog.IsPrimaryButtonEnabled = false;
+                    return;
+                }
+            }
             NameTakenError.Visibility = Visibility.Collapsed;
+            if (name.Length > 0)
+                SavePlaylistDialog.IsPrimaryButtonEnabled = true;
+            return;
         }
 
         private void DeletePlaylist(object sender, RoutedEventArgs e)

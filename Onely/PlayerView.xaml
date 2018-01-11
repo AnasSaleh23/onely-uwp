@@ -108,9 +108,9 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{Binding ElementName=SavePlaylistName, Path=Text, Converter={StaticResource EmptyStringToBoolConverter}}" CloseButtonText="Cancel" PrimaryButtonClick="SavePlaylist" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
+        <ContentDialog x:Name="SavePlaylistDialog" PrimaryButtonText="Save" IsPrimaryButtonEnabled="{Binding ElementName=SavePlaylistName, Path=Text, Converter={StaticResource EmptyStringToBoolConverter}}" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind SavePlaylist}" IsEnabled="True" Visibility="Visible" Title="Save Playlist">
             <StackPanel>
-                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" />
+                <TextBox x:Name="SavePlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" KeyUp="{x:Bind CheckIfNameTaken}" />
                 <StackPanel Orientation="Horizontal" Visibility="{x:Bind player.Playlist.Name, Converter={StaticResource EmptyStringToHiddenConverter}, Mode=OneWay}">
                     <TextBlock x:Name="CurrentPlaylistName" Text="{x:Bind player.Playlist.Name, Mode=OneWay}" />
                 </StackPanel>

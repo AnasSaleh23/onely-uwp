@@ -305,8 +305,8 @@ namespace Onely
         public async void LoadPlaylist(int id)
         {
             IsBusy = true;
-            bool loaded = await Playlist.ClearAndLoadNew(id);
             ClearPlayer();
+            bool loaded = await Playlist.ClearAndLoadNew(id);
             UpdateOnPlaylistLoad(loaded);
         }
 
