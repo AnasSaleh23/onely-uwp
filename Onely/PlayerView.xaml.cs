@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 using Windows.Storage.Pickers;
 using Windows.UI.Input;
 using Windows.Foundation;
-using Onely.Elements;
+using Onely.AttachedProperties;
 using System.ComponentModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -273,10 +273,8 @@ namespace Onely
 
         private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
         {
-            var element = (PlaylistActionButton)e;
-            if (element.PlaylistId == null)
-                return new Tuple<int, string>(-1, String.Empty);
-            return new Tuple<int, string>(int.Parse(element.PlaylistId), element.PlaylistName);
+            var element = (UIElement)e;
+            return new Tuple<int, string>(Ap.GetPlaylistId(element), Ap.GetPlaylistName(element));
         }
 
         // Saving playlists

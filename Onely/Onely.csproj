@@ -103,7 +103,7 @@
     <Compile Include="Components\Player.cs" />
     <Compile Include="Components\Playlist.cs" />
     <Compile Include="Components\PlaylistItem.cs" />
-    <Compile Include="Elements\OnelyElements.cs" />
+    <Compile Include="AttachedProperties\AttachedProperties.cs" />
     <Compile Include="PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>

@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Onely"
-    xmlns:oe="using:Onely.Elements"
+    xmlns:oe="using:Onely.AttachedProperties"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:oconverters="using:Onely.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -97,13 +97,13 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <oe:PlaylistActionButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
-                                    <oe:PlaylistActionButton Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist">
+                                    <Button Content="{x:Bind Name, Mode=OneWay}" oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
+                                    <Button Grid.Column="1" oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist">
                                         <SymbolIcon Symbol="Add"/>
-                                    </oe:PlaylistActionButton>
-                                    <oe:PlaylistActionButton Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" PlaylistName="{x:Bind Name, Mode=OneWay}" Click="DeletePlaylist">
+                                    </Button>
+                                    <Button Grid.Column="2" oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" Click="DeletePlaylist">
                                         <SymbolIcon Symbol="Delete"/>
-                                    </oe:PlaylistActionButton>
+                                    </Button>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
