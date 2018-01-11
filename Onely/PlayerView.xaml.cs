@@ -419,10 +419,9 @@ namespace Onely
 
         private async void DeletePlaylist(object sender, RoutedEventArgs e)
         {
-            var element = (PlaylistDeleteButton)sender;
-            int id = int.Parse(element.PlaylistId);
-            PlaylistToDelete = element.PlaylistName;
-
+            var info = GetPlaylistLabelsFromElement(sender);
+            PlaylistToDelete = info.Item2;
+            var id = info.Item1;
             await ConfirmDeleteDialog.ShowAsync();
             if (!OkToDelete)
                 return;
@@ -446,19 +445,25 @@ namespace Onely
 
         private void OpenPlaylist(object sender, RoutedEventArgs e)
         {
-            var element = (PlaylistOpenButton)sender;
-            int id = int.Parse(element.PlaylistId);
-            player.LoadPlaylist(id);
+            var info = GetPlaylistLabelsFromElement(sender);
+            player.LoadPlaylist(info.Item1);
             PlaylistNameToSave = player.Playlist.Name;
             ShowOpenPane = false;
         }
 
         private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
         {
-            var element = (PlaylistAppendButton)sender;
-            int id = int.Parse(element.PlaylistId);
-            player.AddPlaylistToExistingPlaylist(id);
+            var info = GetPlaylistLabelsFromElement(sender);
+            player.AddPlaylistToExistingPlaylist(info.Item1);
             ShowOpenPane = false;
+        }
+
+        private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
+        {
+            var element = (PlaylistActionButton)e;
+            if (element.PlaylistId == null)
+                return new Tuple<int, string>(-1, String.Empty);
+            return new Tuple<int, string>(int.Parse(element.PlaylistId), element.PlaylistName);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

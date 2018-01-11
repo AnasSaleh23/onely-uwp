@@ -97,9 +97,13 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <oe:PlaylistOpenButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
-                                    <oe:PlaylistAppendButton Icon="Add" Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist"/>
-                                    <oe:PlaylistDeleteButton Icon="Delete" Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" PlaylistName="{x:Bind Name, Mode=OneWay}" Click="DeletePlaylist"/>
+                                    <oe:PlaylistActionButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
+                                    <oe:PlaylistActionButton Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist">
+                                        <SymbolIcon Symbol="Add"/>
+                                    </oe:PlaylistActionButton>
+                                    <oe:PlaylistActionButton Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" PlaylistName="{x:Bind Name, Mode=OneWay}" Click="DeletePlaylist">
+                                        <SymbolIcon Symbol="Delete"/>
+                                    </oe:PlaylistActionButton>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

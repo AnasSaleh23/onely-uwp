@@ -8,20 +8,8 @@ using Windows.UI.Xaml.Controls;
 
 namespace Onely.Elements
 {
-    public class PlaylistOpenButton : Button
-    {
-        public string PlaylistId
-        {
-            get
-            {
-                return (string)GetValue(PlaylistIdProperty);
-            }
-            set { SetValue(PlaylistIdProperty, value); }
-        }
-        public static readonly DependencyProperty PlaylistIdProperty = DependencyProperty.Register("PlaylistId", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
-    }
 
-    public class PlaylistAppendButton : AppBarButton
+    public class PlaylistActionButton : Button
     {
         public string PlaylistId
         {
@@ -31,20 +19,7 @@ namespace Onely.Elements
             }
             set { SetValue(PlaylistIdProperty, value); }
         }
-        public static readonly DependencyProperty PlaylistIdProperty = DependencyProperty.Register("PlaylistId", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
-    }
-
-    public class PlaylistDeleteButton : AppBarButton
-    {
-        public string PlaylistId
-        {
-            get
-            {
-                return (string)GetValue(PlaylistIdProperty);
-            }
-            set { SetValue(PlaylistIdProperty, value); }
-        }
-        public static readonly DependencyProperty PlaylistIdProperty = DependencyProperty.Register("PlaylistId", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
+        public static readonly DependencyProperty PlaylistIdProperty = DependencyProperty.Register("PlaylistId", typeof(string), typeof(PlaylistActionButton), new PropertyMetadata(""));
 
         public string PlaylistName
         {
@@ -54,7 +29,7 @@ namespace Onely.Elements
             }
             set { SetValue(PlaylistNameProperty, value); }
         }
-        public static readonly DependencyProperty PlaylistNameProperty = DependencyProperty.Register("PlaylistName", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
+        public static readonly DependencyProperty PlaylistNameProperty = DependencyProperty.Register("PlaylistName", typeof(string), typeof(PlaylistActionButton), new PropertyMetadata(""));
     }
 
 }
