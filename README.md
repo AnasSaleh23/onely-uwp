@@ -4,4 +4,4 @@ A [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-
 
 ### Work in Progress
 
-This project is currently still in progress. The design is coming together. Rename functionality needs to be added to the UX layer, as well as basic user settings. Testing for certain UWP-specific restrictions needs to be done (i.e, long-term permissions access to files in older playlists, regardless of where those files are stored). But, it currently does play, shuffle, repeat, and allow editing and saving of playlists.
+This project is currently still in progress. It is currently highly useable under most scenarios, but the design needs adjustment for smaller views, and it could use some "flair". Testing for certain UWP-specific restrictions needs to be done (i.e, long-term permissions access to files in older playlists, regardless of where those files are stored). 
