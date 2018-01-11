@@ -45,6 +45,16 @@ namespace Onely.Elements
             set { SetValue(PlaylistIdProperty, value); }
         }
         public static readonly DependencyProperty PlaylistIdProperty = DependencyProperty.Register("PlaylistId", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
+
+        public string PlaylistName
+        {
+            get
+            {
+                return (string)GetValue(PlaylistNameProperty);
+            }
+            set { SetValue(PlaylistNameProperty, value); }
+        }
+        public static readonly DependencyProperty PlaylistNameProperty = DependencyProperty.Register("PlaylistName", typeof(string), typeof(PlaylistDeleteButton), new PropertyMetadata(""));
     }
 
 }

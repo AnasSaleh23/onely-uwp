@@ -103,18 +103,23 @@ namespace Onely
                     OnelyDB.ExecuteReader(command);
 
                     playlist.Id = OnelyDB.GetLastInsertId(db);
+                    playlist.Name = name;
                 }
                 else
                 {
-                    command = new SqliteCommand
+                    if (name != playlist.Name)
                     {
-                        Connection = db,
-                        CommandText = "UPDATE playlists SET name=@Name WHERE id=@ID"
-                    };
-                    command.Parameters.AddWithValue("@Name", name);
-                    command.Parameters.AddWithValue("@ID", playlist.Id);
-                    OnelyDB.ExecuteReader(command);
-
+                        command = new SqliteCommand
+                        {
+                            Connection = db,
+                            CommandText = "UPDATE playlists SET name=@Name WHERE id=@ID"
+                        };
+                        command.Parameters.AddWithValue("@Name", name);
+                        command.Parameters.AddWithValue("@ID", playlist.Id);
+                        OnelyDB.ExecuteReader(command);
+                        playlist.Name = name;
+                    }
+                    
                     PlaylistItemStatic.DeleteBasedOnPlaylistId(playlist.Id, db);
                 }
                 int count = 0;

@@ -44,6 +44,34 @@ namespace Onely
             }
         }
 
+        private string playlistToDelete = String.Empty;
+        public string PlaylistToDelete
+        {
+            get => this.playlistToDelete;
+            set
+            {
+                this.playlistToDelete = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("PlaylistToDelete"));
+                }
+            }
+        }
+
+        private bool showOpenPane = false;
+        public bool ShowOpenPane
+        {
+            get => this.showOpenPane;
+            set
+            {
+                this.showOpenPane = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("ShowOpenPane"));
+                }
+            }
+        }
+
         private bool playlistNameTaken = false;
         public bool PlaylistNameTaken
         {
@@ -71,7 +99,21 @@ namespace Onely
                 }
             }
         }
-        
+
+        private bool okToDelete = false;
+        public bool OkToDelete
+        {
+            get => this.okToDelete;
+            set
+            {
+                this.okToDelete = value;
+                if (null != this.PropertyChanged)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("OkToDelete"));
+                }
+            }
+        }
+
         private string[] allowedAudioFileTypes = { ".flac", ".mp3", ".m4a", ".aac", ".wav", ".ogg", ".aif", ".aiff" };
         private string[] allowedImageFileTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".pdf" };
 
@@ -221,6 +263,7 @@ namespace Onely
 
         private async Task LoadFiles(IEnumerable<StorageFile> files)
         {
+            ShowOpenPane = false;
             if (files != null)
             {
                 IEnumerable<StorageFile> audioFiles = files.Where(i => allowedAudioFileTypes.Contains(i.FileType));
@@ -290,13 +333,14 @@ namespace Onely
         
         private async void OpenSaveDialog()
         {
+            ShowOpenPane = false;
             CheckIfNameTaken();
             await SavePlaylistDialog.ShowAsync();
         }
 
         private void TogglePane()
         {
-            FileCommand.IsPaneOpen = !FileCommand.IsPaneOpen;
+            ShowOpenPane = !ShowOpenPane;
         }
 
         private void ToggleShowPlaylists()
@@ -353,25 +397,44 @@ namespace Onely
                 {
                     PlaylistNameTaken = true;
                     OkToSave = false;
+                    return;
                 }
             }
             PlaylistNameTaken = false;
             if (name.Length > 0)
                 OkToSave = true;
+            else
+                OkToSave = false;
             return;
         }
 
-        private void DeletePlaylist(object sender, RoutedEventArgs e)
+        private void ConfirmDelete()
+        {
+            OkToDelete = true;
+        }
+
+        private async void DeletePlaylist(object sender, RoutedEventArgs e)
         {
             var element = (PlaylistDeleteButton)sender;
             int id = int.Parse(element.PlaylistId);
-            // should ask first
+            PlaylistToDelete = element.PlaylistName;
+
+            await ConfirmDeleteDialog.ShowAsync();
+            if (!OkToDelete)
+                return;
             PlaylistStatic.DeletePlaylistById(id);
+            if (id == player.Playlist.Id)
+            {
+                player.Playlist.UpdateAfterDeletedFromDb();
+            }
+            OkToDelete = false;
             foreach(var playlist in SavedPlaylists)
             {
                 if (playlist.Id == id)
                 {
                     SavedPlaylists.Remove(playlist);
+                    if (SavedPlaylists.Count() < 1)
+                        ShowOpenPane = false;
                     return;
                 }
             }
@@ -383,7 +446,7 @@ namespace Onely
             int id = int.Parse(element.PlaylistId);
             player.LoadPlaylist(id);
             PlaylistNameToSave = player.Playlist.Name;
-            FileCommand.IsPaneOpen = false;
+            ShowOpenPane = false;
         }
 
         private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
@@ -391,7 +454,7 @@ namespace Onely
             var element = (PlaylistAppendButton)sender;
             int id = int.Parse(element.PlaylistId);
             player.AddPlaylistToExistingPlaylist(id);
-            FileCommand.IsPaneOpen = false;
+            ShowOpenPane = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

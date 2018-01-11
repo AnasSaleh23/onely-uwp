@@ -73,7 +73,7 @@
             </ListView>
         </StackPanel>
         
-        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="False" DisplayMode="CompactOverlay" CompactPaneLength="70" OpenPaneLength="350">
+        <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="{x:Bind ShowOpenPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMode="CompactOverlay" CompactPaneLength="70" OpenPaneLength="350">
 
             <SplitView.Pane>
                 <Grid>
@@ -82,13 +82,13 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Column="0">
-                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind ToggleShowPlaylists}" Visibility="{Binding SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}, Mode=OneWay}" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" AccessKey="L"/>
+                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind ToggleShowPlaylists}" Visibility="{Binding Path=SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}, Mode=OneWay}" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" AccessKey="L"/>
                         <AppBarButton x:Name="AddFilesButton" Click="{x:Bind AddFiles}" Icon="OpenFile" Label="Add Files" AccessKey="O"/>
                         <AppBarButton x:Name="AddFolderButton" Click="{x:Bind AddFolder}" Icon="Folder" Label="Add Folder" AccessKey="F"/>
                         <AppBarButton x:Name="SavePlaylistButton" Click="{x:Bind OpenSaveDialog}" Icon="Save" Label="Save" AccessKey="S" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
                         <AppBarButton x:Name="ClearPlaylistButton" Click="{x:Bind ClearPlaylist}" Icon="Delete" Label="Clear" AccessKey="Delete" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
                     </StackPanel>
-                    <ListBox x:Name="PlaylistMenu" ScrollViewer.VerticalScrollMode="Auto" ItemsSource="{x:Bind SavedPlaylists, Mode=OneWay}" Grid.Column="1">
+                    <ListBox x:Name="PlaylistMenu" Height="{Binding ElementName=FileCommand, Path=ActualHeight}" ScrollViewer.VerticalScrollMode="Auto" ItemsSource="{x:Bind SavedPlaylists, Mode=OneWay}" Grid.Column="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="local:PlaylistReference">
                                 <Grid>
@@ -98,8 +98,8 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <oe:PlaylistOpenButton Content="{x:Bind Name, Mode=OneWay}" PlaylistId="{x:Bind Id, Mode=OneWay}" Grid.Column="0" Click="OpenPlaylist"/>
-                                    <oe:PlaylistAppendButton Label="Add" Icon="Add" Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist"/>
-                                    <oe:PlaylistDeleteButton Label="Delete" Icon="Delete" Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="DeletePlaylist"/>
+                                    <oe:PlaylistAppendButton Icon="Add" Grid.Column="1" PlaylistId="{x:Bind Id, Mode=OneWay}" Click="AddToExistingPlaylist"/>
+                                    <oe:PlaylistDeleteButton Icon="Delete" Grid.Column="2" PlaylistId="{x:Bind Id, Mode=OneWay}" PlaylistName="{x:Bind Name, Mode=OneWay}" Click="DeletePlaylist"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -115,6 +115,14 @@
                     <TextBlock x:Name="CurrentPlaylistName" Text="{x:Bind PlaylistNameToSave, Mode=OneWay}" />
                 </StackPanel>
                 <TextBlock x:Name="NameTakenError" Text="Name already taken." Visibility="{x:Bind PlaylistNameTaken, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="ConfirmDeleteDialog" PrimaryButtonText="Ok" IsPrimaryButtonEnabled="True" CloseButtonText="Cancel" PrimaryButtonClick="{x:Bind ConfirmDelete}" Title="Confirm Delete">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Are you sure you want to delete" Margin="0,0,5,0"/>
+                <TextBlock Text="{x:Bind PlaylistToDelete, Mode=OneWay}" />
+                <TextBlock Text="?"/>
             </StackPanel>
         </ContentDialog>
 

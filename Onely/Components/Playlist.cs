@@ -157,6 +157,12 @@ namespace Onely
             HasItems = false;
         }
 
+        public void UpdateAfterDeletedFromDb()
+        {
+            Id = -1;
+            Name = null;
+        }
+
         public PlaylistItem SetCurrentPositionAndGetItem(int index)
         {
             PlaylistItem item;
