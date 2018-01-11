@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -58,7 +57,7 @@ namespace Onely
                         return this.Items[SelectedIndex];
                     } catch(Exception e)
                     {
-                        Debug.WriteLine(e.ToString());
+                        Console.WriteLine(e);
                     }
                 return null;
             }

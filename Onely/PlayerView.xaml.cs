@@ -9,8 +9,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.Storage.Pickers;
-using System.Diagnostics;
-using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.Foundation;
 using Onely.Elements;
@@ -132,6 +130,7 @@ namespace Onely
             };
         }
 
+        // Player controls
         private void Play(int index) => player.Play(index);
 
         private void Play() => player.Play();
@@ -152,28 +151,7 @@ namespace Onely
 
         private void ToggleRepeatMode() => player.ToggleRepeatMode();
 
-        private void ProgressBarSeek(object sender, PointerRoutedEventArgs e)
-        {
-            var bar = (UIElement)sender;
-            PointerPoint pointer = e.GetCurrentPoint(bar);
-            Point position = pointer.Position;
-            var size = bar.RenderSize;
-            var ratio = (position.X / size.Width);
-            if (!player.IsPlaying)
-                player.PlayProgress = ratio * 100;
-            player.SeekFromRatio(ratio);
-        }
-
-        private void CursorShowHand()
-        {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
-        }
-
-        private void CursorShowArrow()
-        {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
-        }
-
+        // Loading files 
         private void AddFileFilters(ref FileOpenPicker picker)
         {
             foreach(var t in allowedAudioFileTypes)
@@ -272,84 +250,41 @@ namespace Onely
             }
         }
 
-        private void PlaylistItem_DoubleTapped()
+        // Loading playlists
+        private void TogglePlaylistPane()
         {
-            Play(player.TargetIndex);
+            ShowOpenPane = !ShowOpenPane;
         }
 
-        private void Playlist_DragOver(object sender, DragEventArgs e)
+        private void OpenPlaylist(object sender, RoutedEventArgs e)
         {
-            if (ReorderingInitiated)
-            {
-                e.AcceptedOperation = DataPackageOperation.Move;
-            }
-            else
-            {
-                e.AcceptedOperation = DataPackageOperation.Copy;
-            }
+            var info = GetPlaylistLabelsFromElement(sender);
+            player.LoadPlaylist(info.Item1);
+            PlaylistNameToSave = player.Playlist.Name;
+            ShowOpenPane = false;
         }
 
-        private void Playlist_DragItemsStart()
+        private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
         {
-            ReorderingInitiated = true;
-            player.Playlist.PrepareForReorder();
+            var info = GetPlaylistLabelsFromElement(sender);
+            player.AddPlaylistToExistingPlaylist(info.Item1);
+            ShowOpenPane = false;
         }
 
-        private void Playlist_DragItemsCompleted()
+        private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
         {
-            ReorderingInitiated = false;
-            player.Playlist.SetSelectedIndexAfterReorder();
+            var element = (PlaylistActionButton)e;
+            if (element.PlaylistId == null)
+                return new Tuple<int, string>(-1, String.Empty);
+            return new Tuple<int, string>(int.Parse(element.PlaylistId), element.PlaylistName);
         }
 
-        private void PlaylistList_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case VirtualKey.Enter:
-                    if (player.TargetIndex > -1)
-                    {
-                        try
-                        {
-                            var item = player.Playlist.Items[player.TargetIndex];
-                        } catch(Exception ex)
-                        {
-                            Debug.WriteLine(ex.ToString());
-                        }
-                        Play(player.TargetIndex);
-                    }
-                    break;
-
-                case VirtualKey.Delete:
-                    if(player.TargetIndex > -1)
-                    {
-                        DeleteItem(player.TargetIndex);
-                    }
-                    break;
-
-                case VirtualKey.Space:
-                    TogglePlayPause();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-        
+        // Saving playlists
         private async void OpenSaveDialog()
         {
             ShowOpenPane = false;
             CheckIfNameTaken();
             await SavePlaylistDialog.ShowAsync();
-        }
-
-        private void TogglePane()
-        {
-            ShowOpenPane = !ShowOpenPane;
-        }
-
-        private void ToggleShowPlaylists()
-        {
-            TogglePane();
         }
 
         private void SavePlaylist()
@@ -412,6 +347,7 @@ namespace Onely
             return;
         }
 
+        // Deleting playlists
         private void ConfirmDelete()
         {
             OkToDelete = true;
@@ -443,27 +379,89 @@ namespace Onely
             }
         }
 
-        private void OpenPlaylist(object sender, RoutedEventArgs e)
+        // Additional UX control
+        private void PlaylistItem_DoubleTapped()
         {
-            var info = GetPlaylistLabelsFromElement(sender);
-            player.LoadPlaylist(info.Item1);
-            PlaylistNameToSave = player.Playlist.Name;
-            ShowOpenPane = false;
+            Play(player.TargetIndex);
         }
 
-        private void AddToExistingPlaylist(object sender, RoutedEventArgs e)
+        private void Playlist_DragOver(object sender, DragEventArgs e)
         {
-            var info = GetPlaylistLabelsFromElement(sender);
-            player.AddPlaylistToExistingPlaylist(info.Item1);
-            ShowOpenPane = false;
+            if (ReorderingInitiated)
+            {
+                e.AcceptedOperation = DataPackageOperation.Move;
+            }
+            else
+            {
+                e.AcceptedOperation = DataPackageOperation.Copy;
+            }
         }
 
-        private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
+        private void Playlist_DragItemsStart()
         {
-            var element = (PlaylistActionButton)e;
-            if (element.PlaylistId == null)
-                return new Tuple<int, string>(-1, String.Empty);
-            return new Tuple<int, string>(int.Parse(element.PlaylistId), element.PlaylistName);
+            ReorderingInitiated = true;
+            player.Playlist.PrepareForReorder();
+        }
+
+        private void Playlist_DragItemsCompleted()
+        {
+            ReorderingInitiated = false;
+            player.Playlist.SetSelectedIndexAfterReorder();
+        }
+
+        private void PlaylistList_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case VirtualKey.Enter:
+                    if (player.TargetIndex > -1)
+                    {
+                        try
+                        {
+                            var item = player.Playlist.Items[player.TargetIndex];
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
+                        Play(player.TargetIndex);
+                    }
+                    break;
+
+                case VirtualKey.Delete:
+                    if (player.TargetIndex > -1)
+                        DeleteItem(player.TargetIndex);
+                    break;
+
+                case VirtualKey.Space:
+                    TogglePlayPause();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void ProgressBarSeek(object sender, PointerRoutedEventArgs e)
+        {
+            var bar = (UIElement)sender;
+            PointerPoint pointer = e.GetCurrentPoint(bar);
+            Point position = pointer.Position;
+            var size = bar.RenderSize;
+            var ratio = (position.X / size.Width);
+            if (!player.IsPlaying)
+                player.PlayProgress = ratio * 100;
+            player.SeekFromRatio(ratio);
+        }
+
+        private void CursorShowHand()
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 1);
+        }
+
+        private void CursorShowArrow()
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

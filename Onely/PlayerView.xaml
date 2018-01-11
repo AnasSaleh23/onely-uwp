@@ -82,7 +82,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Column="0">
-                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind ToggleShowPlaylists}" Visibility="{Binding Path=SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}, Mode=OneWay}" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" AccessKey="L"/>
+                        <AppBarButton x:Name="OpenPlaylistButton" Icon="MusicInfo" Label="Playlists" Click="{x:Bind TogglePlaylistPane}" Visibility="{Binding Path=SavedPlaylists, Converter={StaticResource EmptyCollectionToHiddenConverter}, Mode=OneWay}" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}" AccessKey="L"/>
                         <AppBarButton x:Name="AddFilesButton" Click="{x:Bind AddFiles}" Icon="OpenFile" Label="Add Files" AccessKey="O"/>
                         <AppBarButton x:Name="AddFolderButton" Click="{x:Bind AddFolder}" Icon="Folder" Label="Add Folder" AccessKey="F"/>
                         <AppBarButton x:Name="SavePlaylistButton" Click="{x:Bind OpenSaveDialog}" Icon="Save" Label="Save" AccessKey="S" IsEnabled="{x:Bind player.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
