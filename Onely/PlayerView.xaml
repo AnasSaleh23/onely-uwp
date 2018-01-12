@@ -32,53 +32,52 @@
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
         <!-- Cover Image and Player busy indicator -->
-        <StackPanel x:Name="CoverImageContainer" Orientation="Vertical" Padding="52,0,0,0" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+        <RelativePanel x:Name="PlaylistContainer" Padding="52,12,0,52" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWith="Transport">
             <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" />
+            <StackPanel x:Name="PlaylistHeaderAndImageContainer" Padding="12,0">
+                <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Width="375" Margin="0,0,0,8"/>
+                <SymbolIcon Symbol="Audio" Width="375" Height="375" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" HorizontalAlignment="Left" Margin="0,0,0,8" VerticalAlignment="Top"/>
+                <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" FontSize="18" FontWeight="Medium" HorizontalAlignment="Center" MaxWidth="375" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}"
+/>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" MaxWidth="375" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
+                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" FontSize="14"/>
+                    <TextBlock Text="|" FontSize="14"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" FontSize="14"/>
+                </StackPanel>
+            </StackPanel>
 
-            <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Height="350" HorizontalAlignment="Center" Margin="0,12,0,12" Grid.Column="0" VerticalAlignment="Center"/>
-            <SymbolIcon Symbol="Audio" Width="350" Height="350" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
-
-            <Grid x:Name="PlaylistLabels" Visibility="{x:Bind player.Playlist.HasItems, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="0,2,0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.6*"/>
-                    <ColumnDefinition Width="1.4*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Title" Padding="24,0" Grid.Column="0"/>
-                <TextBlock Text="Album" Padding="14,0" Grid.Column="1"/>
-                <TextBlock Text="Artist" Padding="6,0" Grid.Column="2"/>
-            </Grid>
-        </StackPanel>
-
-        <!-- Playlist -->
-        <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp" RelativePanel.Below="CoverImageContainer" RelativePanel.Above="Transport" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" Padding="52,0,0,0" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.Resources>
-                <MenuFlyout x:Name="RemoveItemFlyout">
-                    <MenuFlyout.Items>
-                        <MenuFlyoutItem x:Name="Remove" Text="Remove" Click="{x:Bind DeleteFlyoutItem}"/>
-                    </MenuFlyout.Items>
-                </MenuFlyout>
-            </ListView.Resources>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:PlaylistItem">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1.6*" />
-                            <ColumnDefinition Width="1.4*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind Title}" Padding="12,0" Grid.Column="0"/>
-                        <TextBlock Text="{x:Bind Album}" Padding="12,0" Grid.Column="1"/>
-                        <TextBlock Text="{x:Bind Artist}" Padding="12,0" Grid.Column="2"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <!-- Playlist -->
+            <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp" RelativePanel.RightOf="PlaylistHeaderAndImageContainer" RelativePanel.AlignRightWithPanel="True" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.Resources>
+                    <MenuFlyout x:Name="RemoveItemFlyout">
+                        <MenuFlyout.Items>
+                            <MenuFlyoutItem x:Name="Remove" Text="Remove" Click="{x:Bind DeleteFlyoutItem}"/>
+                        </MenuFlyout.Items>
+                    </MenuFlyout>
+                </ListView.Resources>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PlaylistItem">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{x:Bind Title}" Grid.Row="0" FontWeight="Medium"/>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Spacing="8">
+                                <TextBlock Text="{x:Bind Album}" FontSize="12"/>
+                                <TextBlock Text="|" FontSize="12"/>
+                                <TextBlock Text="{x:Bind Artist}" FontSize="12"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RelativePanel>
 
         <!-- File and Playlist Menu -->
         <SplitView x:Name="FileCommand" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.Above="Transport" PanePlacement="Left" IsPaneOpen="{x:Bind ShowOpenPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayMode="CompactOverlay" CompactPaneLength="52" OpenPaneLength="350" RequestedTheme="Default" FontFamily="Segoe UI" PaneBackground="Transparent">
