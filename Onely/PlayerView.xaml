@@ -113,16 +113,16 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{x:Bind Name, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center" />
                                     <StackPanel Orientation="Horizontal" Grid.Column="2">
-                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" Tapped="AddToExistingPlaylist">
-                                            <SymbolIcon Symbol="Add"/>
+                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" ToolTipService.ToolTip="Add this playlist to the current one" Tapped="AddToExistingPlaylist">
+                                            <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE710;"/>
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Background" Value="Transparent"></Setter>
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" Tapped="DeletePlaylist">
-                                            <SymbolIcon Symbol="Delete"/>
+                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" ToolTipService.ToolTip="Delete this playlist from disk" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" Tapped="DeletePlaylist">
+                                            <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"/>
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Background" Value="Transparent"></Setter>
@@ -165,15 +165,23 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Spacing="12" Padding="0,0,12,0" Grid.Column="0">
-                    <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48"/>
-                    <SymbolIcon Symbol="Audio" Width="48" Height="48" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center"/>
-                    <SymbolIcon Symbol="OutlineStar"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" VerticalAlignment="Center"/>
-                    <SymbolIcon Symbol="OutlineStar"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" VerticalAlignment="Center"/>
-                </StackPanel>
+                <Grid Grid.Column="0" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MaxWidth="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" MaxWidth="150"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" MaxHeight="48" Grid.Column="0"/>
+                    <SymbolIcon Symbol="Audio" Width="48" Height="48" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" Grid.Column="0"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="1"/>
+                    <SymbolIcon Symbol="OutlineStar" Grid.Column="2"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="3"/>
+                    <SymbolIcon Symbol="OutlineStar" Grid.Column="4"/>
+                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" VerticalAlignment="Center" Grid.Column="5"/>
+                </Grid>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
                     <AppBarButton Click="{x:Bind RW}" Icon="Previous" LabelPosition="Collapsed" Label="Previous">
