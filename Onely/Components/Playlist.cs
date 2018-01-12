@@ -9,6 +9,7 @@ namespace Onely
 {
     public class Playlist :  NotificationBase
     {
+        // Notifying properties
         private int id = -1;
         public int Id {
             get
@@ -44,18 +45,16 @@ namespace Onely
                 SetProperty(this.hasItems, value, () => this.hasItems = value);
             }
         }
-        public ObservableCollection<PlaylistItem> Items { get; set; }
-        private List<AlbumCover> AlbumCovers;
-        public List<int> RandomIndexes { get; set; }
-        public int SelectedIndex { get; set; }
-        public int RandomIndex {get; set; }
-        public PlaylistItem HeldItem;
-        public PlaylistItem SelectedItem {
-            get {
-                if (SelectedIndex > -1) 
-                    try {
+        public PlaylistItem SelectedItem
+        {
+            get
+            {
+                if (SelectedIndex > -1)
+                    try
+                    {
                         return this.Items[SelectedIndex];
-                    } catch(Exception e)
+                    }
+                    catch (Exception e)
                     {
                         Console.WriteLine(e);
                     }
@@ -78,7 +77,16 @@ namespace Onely
                 SetProperty(this.shuffle, value, () => this.shuffle = value);
             }
         }
+        public ObservableCollection<PlaylistItem> Items { get; set; }
 
+        // Other properties
+        private List<AlbumCover> AlbumCovers;
+        public List<int> RandomIndexes { get; set; }
+        public int SelectedIndex { get; set; }
+        public int RandomIndex {get; set; }
+        public PlaylistItem HeldItem;
+
+        // Constructor
         public Playlist()
         {
             Items = new ObservableCollection<PlaylistItem>();
@@ -245,6 +253,7 @@ namespace Onely
             return null;
         }
 
+        // Loading From DB
         public async Task<bool> LoadDefault()
         {
             var id = PlaylistStatic.GetDefaultPlaylistId();
@@ -289,6 +298,7 @@ namespace Onely
             return await LoadNew(id);
         }
 
+        // Loading files
         public async Task<bool> LoadFiles(IEnumerable<StorageFile> audioFiles, IEnumerable<StorageFile> imageFiles)
         {
             AlbumCover cover;
@@ -330,6 +340,7 @@ namespace Onely
                 HasItems = true;
             else
                 HasItems = false;
+
             if (SelectedIndex == -1)
             {
                 SelectedIndex = 0;
@@ -337,6 +348,7 @@ namespace Onely
             return true;
         }
 
+        // Saving
         public int Save(string name)
         {
             return PlaylistStatic.Save(this, name);

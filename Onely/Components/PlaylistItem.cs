@@ -2,6 +2,7 @@
 using System.IO;
 using TagLibUWP;
 using Windows.Media.Core;
+using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Onely
