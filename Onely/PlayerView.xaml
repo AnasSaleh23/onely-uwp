@@ -169,9 +169,9 @@
                 <Grid Grid.Column="0" ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MaxWidth="200"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" MaxWidth="150"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
@@ -207,13 +207,13 @@
                     <AppBarSeparator/>
                     <AppBarButton Click="{x:Bind ToggleShuffle}" Icon="Shuffle" LabelPosition="Collapsed" Label="Shuffle" Opacity="{x:Bind player.Playlist.Shuffle, Converter={StaticResource BoolToOpacityConverter}, Mode=OneWay}">
                         <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control" Key="S" />
+                            <KeyboardAccelerator Modifiers="Shift" Key="S" />
                         </AppBarButton.KeyboardAccelerators>
                     </AppBarButton>
                     <AppBarButton Click="{x:Bind ToggleRepeatMode}" LabelPosition="Collapsed" Label="Repeat Mode" Opacity="{x:Bind player.RepeatMode, Converter={StaticResource ZeroModeToOpacityConverter}, Mode=OneWay}">
                         <SymbolIcon Symbol="{x:Bind player.RepeatMode, Converter={StaticResource RepeatModeToSymbolConverter}, Mode=OneWay}"/>
                         <AppBarButton.KeyboardAccelerators>
-                            <KeyboardAccelerator Modifiers="Control" Key="R" />
+                            <KeyboardAccelerator Modifiers="Shift" Key="R" />
                         </AppBarButton.KeyboardAccelerators>
                     </AppBarButton>
                 </StackPanel>

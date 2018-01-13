@@ -440,7 +440,7 @@ namespace Onely
         {
             switch (e.Key)
             {
-                case VirtualKey.Enter:
+                case VirtualKey.P:
                     if (player.TargetIndex > -1)
                     {
                         try
