@@ -30,10 +30,10 @@
             <Setter Property="RelativePanel.AlignRightWithPanel" Value="True"/>
             <Setter Property="RelativePanel.AlignBottomWith" Value="Transport"/>
         </Style>
-        <Style x:Key="NowPlayingPanel" TargetType="StackPanel">
+        <Style x:Key="NowPlayingPanel" TargetType="Grid">
             <Setter Property="Padding" Value="12,0"/>
         </Style>
-        <Style x:Key="CoverImage" TargetType="Image">
+        <Style x:Key="CoverImageStyle" TargetType="Image">
             <Setter Property="Width" Value="375"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -93,31 +93,105 @@
         </Style>
     </Page.Resources>
 
-    <VisualStateManager.VisualStateGroups>
-        <VisualStateGroup>
 
-        </VisualStateGroup>
-    </VisualStateManager.VisualStateGroups>
 
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="PlaylistHeaderAndImageContainer.Padding" Value="0,0,0,14"/>
+                        <Setter Target="PlaylistHeaderAndImageContainer.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistHeaderAndImageContainer.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+
+                        <Setter Target="CoverImage.Width" Value="275"/>
+
+                        <Setter Target="NowPlayingTitle.MaxWidth" Value="275"/>
+                        <Setter Target="NowPlayingTitle.FontSize" Value="17"/>
+
+                        <Setter Target="PlaylistView.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistView.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistView.(RelativePanel.Below)" Value="PlaylistHeaderAndImageContainer"/>
+
+                        <Setter Target="TransportTitle.Visibility" Value="Collapsed"/>
+                        <Setter Target="TransportArtist.Visibility" Value="Collapsed"/>
+                        <Setter Target="TransportAlbum.Visibility" Value="Collapsed"/>
+                        <Setter Target="TransportAlbumDivider.Visibility" Value="Collapsed"/>
+                        <Setter Target="TransportTitleDivider.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MediumNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="560"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="PlaylistHeaderAndImageContainer.Padding" Value="0,0,0,14"/>
+                        <Setter Target="PlaylistHeaderAndImageContainer.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistHeaderAndImageContainer.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        
+                        <Setter Target="CoverImage.Width" Value="300"/>
+
+                        <Setter Target="NowPlayingTitle.MaxWidth" Value="300"/>
+
+                        <Setter Target="PlaylistView.(RelativePanel.AlignLeftWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistView.(RelativePanel.AlignRightWithPanel)" Value="True"/>
+                        <Setter Target="PlaylistView.(RelativePanel.Below)" Value="PlaylistHeaderAndImageContainer"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Medium">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CoverImage.Width" Value="375"/>
+
+                        <Setter Target="NowPlayingTitle.MaxWidth" Value="375"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1200"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CoverImage.Width" Value="460"/>
+                        
+                        <Setter Target="NowPlayingTitle.MaxWidth" Value="460"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
         
         <!-- Cover Image and Now Playing info -->
         <RelativePanel x:Name="PlaylistContainer" Style="{StaticResource PlaylistPanel}">
-            
-            <StackPanel x:Name="PlaylistHeaderAndImageContainer" Style="{StaticResource NowPlayingPanel}">
-                <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Style="{StaticResource CoverImage}"/>
-                <SymbolIcon Symbol="Audio" Width="375" Height="375" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" />
 
-                <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" FontSize="18" FontWeight="Medium" HorizontalAlignment="Center" MaxWidth="375" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}"
+            <Grid x:Name="PlaylistHeaderAndImageContainer"  Style="{StaticResource NowPlayingPanel}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Style="{StaticResource CoverImageStyle}" Grid.Row="0"/>
+                    <SymbolIcon Symbol="Audio" Width="375" Height="375" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" Grid.Row="0"/>
+
+                    <TextBlock x:Name="NowPlayingTitle" Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" FontSize="18" FontWeight="Medium" HorizontalAlignment="Center" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Grid.Row="1"
 />
-                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" MaxWidth="375" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}">
-                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" Style="{StaticResource NowPlayingDetail}"/>
-                    <TextBlock Text="|" Style="{StaticResource NowPlayingDetail}"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" Style="{StaticResource NowPlayingDetail}"/>
-                </StackPanel>
-            </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" MaxWidth="375" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Grid.Row="2">
+                        <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" Style="{StaticResource NowPlayingDetail}"/>
+                        <TextBlock Text="|" Style="{StaticResource NowPlayingDetail}"/>
+                        <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" Style="{StaticResource NowPlayingDetail}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
 
             <!-- Playlist -->
             <ListView x:Name="PlaylistView" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp" SelectionChanged="ScrollPlaylistItemIntoView" Style="{StaticResource PlaylistListView}">
@@ -238,11 +312,11 @@
                     </Grid.ColumnDefinitions>
                     <Image x:Name="TransportCoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Grid.Column="0" Style="{StaticResource TransportImage}"/>
                     <SymbolIcon Symbol="Audio" Width="48" Height="48" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" Grid.Column="0"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" Grid.Column="1" Style="{StaticResource TransportPlayingText}"/>
-                    <SymbolIcon Symbol="OutlineStar" Grid.Column="2"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" Grid.Column="3" Style="{StaticResource TransportPlayingText}"/>
-                    <SymbolIcon Symbol="OutlineStar" Grid.Column="4"/>
-                    <TextBlock Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" Grid.Column="5" Style="{StaticResource TransportPlayingText}"/>
+                    <TextBlock x:Name="TransportTitle" Text="{x:Bind player.NowPlaying.Title, Mode=OneWay}" Grid.Column="1" Style="{StaticResource TransportPlayingText}"/>
+                    <SymbolIcon x:Name="TransportTitleDivider" Symbol="OutlineStar" Grid.Column="2"/>
+                    <TextBlock x:Name="TransportAlbum" Text="{x:Bind player.NowPlaying.Album, Mode=OneWay}" Grid.Column="3" Style="{StaticResource TransportPlayingText}"/>
+                    <SymbolIcon x:Name="TransportAlbumDivider" Symbol="OutlineStar" Grid.Column="4"/>
+                    <TextBlock x:Name="TransportArtist" Text="{x:Bind player.NowPlaying.Artist, Mode=OneWay}" Grid.Column="5" Style="{StaticResource TransportPlayingText}"/>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
