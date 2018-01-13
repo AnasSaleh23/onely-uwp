@@ -17,7 +17,6 @@ using System.ComponentModel;
 using Windows.Data.Xml.Dom;
 using System.Xml.Linq;
 using Windows.UI.ViewManagement;
-using Windows.ApplicationModel.Activation;
 
 namespace Onely
 {
