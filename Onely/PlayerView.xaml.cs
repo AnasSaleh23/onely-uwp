@@ -463,6 +463,12 @@ namespace Onely
             }
         }
 
+        private void ScrollPlaylistItemIntoView(object sender, SelectionChangedEventArgs e)
+        {
+            var listView = (ListView)sender;
+            listView.ScrollIntoView(listView.SelectedItem);
+        }
+
         private void ProgressBarSeek(object sender, PointerRoutedEventArgs e)
         {
             var bar = (UIElement)sender;
@@ -514,6 +520,6 @@ namespace Onely
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
     }
 }

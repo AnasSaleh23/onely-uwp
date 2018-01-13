@@ -31,9 +31,11 @@
 
     <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark" AllowDrop="True" DragOver="Playlist_DragOver" Drop="Playlist_Drop">
 
+        <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
+        
         <!-- Cover Image and Player busy indicator -->
         <RelativePanel x:Name="PlaylistContainer" Padding="52,12,0,52" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignBottomWith="Transport">
-            <ProgressBar IsIndeterminate="True" IsEnabled="{x:Bind player.IsBusy, Mode=OneWay}" Visibility="{x:Bind player.IsBusy, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" Foreground="{ThemeResource ProgressBarIndeterminateForegroundThemeBrush}" />
+            
             <StackPanel x:Name="PlaylistHeaderAndImageContainer" Padding="12,0">
                 <Image x:Name="CoverImage" Source="{x:Bind player.NowPlaying.Cover, Mode=OneWay}" Visibility="{x:Bind player.NowPlaying, Converter={StaticResource EmptyObjectToHiddenConverter}, Mode=OneWay}" Width="375" Margin="0,0,0,8"/>
                 <SymbolIcon Symbol="Audio" Width="375" Height="375" Visibility="{x:Bind player.NowPlaying.Cover, Converter={StaticResource EmptyObjectToHiddenConverter}, ConverterParameter=True, Mode=OneWay}" HorizontalAlignment="Left" Margin="0,0,0,8" VerticalAlignment="Top"/>
@@ -47,7 +49,7 @@
             </StackPanel>
 
             <!-- Playlist -->
-            <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp" RelativePanel.RightOf="PlaylistHeaderAndImageContainer" RelativePanel.AlignRightWithPanel="True" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
+            <ListView x:Name="PlaylistView" ScrollViewer.VerticalScrollMode="Auto" AllowDrop="True" CanDragItems="True" CanReorderItems="True" DoubleTapped="{x:Bind PlaylistItem_DoubleTapped}" RightTapped="ShowPlaylistFlyout" ItemsSource="{x:Bind player.Playlist.Items, Mode=OneWay}" SelectedIndex="{x:Bind player.TargetIndex, Mode=TwoWay}" DragItemsStarting="{x:Bind Playlist_DragItemsStart}" DragItemsCompleted="{x:Bind Playlist_DragItemsCompleted}" KeyUp="PlaylistList_KeyUp" SelectionChanged="ScrollPlaylistItemIntoView" RelativePanel.RightOf="PlaylistHeaderAndImageContainer" RelativePanel.AlignRightWithPanel="True" Background="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
