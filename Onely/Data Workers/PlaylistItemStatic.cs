@@ -77,6 +77,7 @@ namespace Onely
 
                 List<PlaylistItem> items = new List<PlaylistItem>();
                 List<AlbumCover> covers = new List<AlbumCover>();
+
                 while (res.Read())
                 {
                     var item = await LoadFromPath(res.GetString(0));

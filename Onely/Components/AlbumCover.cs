@@ -54,7 +54,8 @@ namespace Onely
             if (file != null)
             {
                 return await FromStorageFile(file);
-            }
+            } else
+                Debug.WriteLine("File not found: " + p);
             return null;
         }
         
