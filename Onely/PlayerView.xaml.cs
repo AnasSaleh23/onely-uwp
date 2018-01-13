@@ -10,9 +10,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.Storage.Pickers;
 using Windows.UI.Input;
+using Windows.UI.Notifications;
 using Windows.Foundation;
 using Onely.AttachedProperties;
 using System.ComponentModel;
+using Windows.Data.Xml.Dom;
+using System.Xml.Linq;
 
 namespace Onely
 {
@@ -235,9 +238,18 @@ namespace Onely
             ShowOpenPane = false;
             if (files != null)
             {
+                var currentPlaylistSize = player.Playlist.Items.Count();
                 IEnumerable<StorageFile> audioFiles = files.Where(i => allowedAudioFileTypes.Contains(i.FileType));
                 IEnumerable<StorageFile> imageFiles = AlbumCover.GetValidCoverImagesFromFiles(files);
                 await player.LoadFilesToPlaylist(audioFiles, imageFiles);
+                var sizeDifference = player.Playlist.Items.Count() - currentPlaylistSize;
+                if (sizeDifference > 0)
+                {
+                    var msg = sizeDifference + " track";
+                    if (sizeDifference != 1)
+                        msg += "s";
+                    ServeToast(msg + " added");
+                }
             }
         }
 
@@ -269,6 +281,7 @@ namespace Onely
             player.AddPlaylistToExistingPlaylist(info.Item1);
             ShowOpenPane = false;
             e.Handled = true;
+            ServeToast(info.Item2 + " was added to the current playlist");
         }
 
         private Tuple<int, string> GetPlaylistLabelsFromElement(object e)
@@ -303,6 +316,7 @@ namespace Onely
                     return;
                 }
                 SavedPlaylists.Add(new PlaylistReference(id, name));
+                ServeToast(name + " saved");
                 return;
             }
 
@@ -313,6 +327,7 @@ namespace Onely
             } 
             else
                 player.SavePlaylist(name);
+            ServeToast(name + " saved");
         }
 
         private void CheckIfNameTaken()
@@ -364,6 +379,7 @@ namespace Onely
                 player.Playlist.UpdateAfterDeletedFromDb();
             }
             okToDelete = false;
+            ServeToast(PlaylistToDelete + " has been deleted");
             foreach(var playlist in SavedPlaylists)
             {
                 if (playlist.Id == id)
@@ -467,6 +483,34 @@ namespace Onely
         private void CursorShowArrow()
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
+        }
+
+        // Making Toast
+        private static XmlDocument CreateToast(string msg)
+        {
+            var xDoc = new XDocument(
+                new XElement("toast",
+                    new XAttribute("duration", "short"),
+                    new XElement("visual", 
+                        new XElement("binding", new XAttribute("template", "ToastText02"), 
+                            new XElement("text", "Onely", new XAttribute("id", 1)), 
+                            new XElement("text", msg, new XAttribute("id", 2))
+                        )
+                    )
+                )
+            );
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xDoc.ToString());
+            return xmlDoc;
+        }
+
+        private static void ServeToast(string msg)
+        {
+            var toastXml = CreateToast(msg);
+            var toaster = new ToastNotification(toastXml);
+            var notifier = ToastNotificationManager.CreateToastNotifier();
+            notifier.Show(toaster);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

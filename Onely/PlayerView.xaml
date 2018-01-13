@@ -112,7 +112,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="{x:Bind Name, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center" />
                                     <StackPanel Orientation="Horizontal" Grid.Column="2">
-                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" ToolTipService.ToolTip="Add this playlist to the current one" Tapped="AddToExistingPlaylist">
+                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" ToolTipService.ToolTip="Add this playlist to the current one" Tapped="AddToExistingPlaylist">
                                             <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE710;"/>
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -120,7 +120,7 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" ToolTipService.ToolTip="Delete this playlist from disk" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" Tapped="DeletePlaylist">
+                                        <Button oe:Ap.PlaylistId="{x:Bind Id, Mode=OneWay}" oe:Ap.PlaylistName="{x:Bind Name, Mode=OneWay}" ToolTipService.ToolTip="Delete this playlist from disk" Tapped="DeletePlaylist">
                                             <TextBlock FontSize="16" FontFamily="Segoe MDL2 Assets" Text="&#xE74D;"/>
                                             <Button.Style>
                                                 <Style TargetType="Button">
