@@ -16,6 +16,7 @@ using Onely.AttachedProperties;
 using System.ComponentModel;
 using Windows.Data.Xml.Dom;
 using System.Xml.Linq;
+using Windows.UI.ViewManagement;
 
 namespace Onely
 {
@@ -273,6 +274,7 @@ namespace Onely
             player.LoadPlaylist(info.Item1);
             PlaylistNameToSave = player.Playlist.Name;
             ShowOpenPane = false;
+            UpdateTitleBar();
         }
 
         private void AddToExistingPlaylist(object sender, TappedRoutedEventArgs e)
@@ -316,7 +318,7 @@ namespace Onely
                     return;
                 }
                 SavedPlaylists.Add(new PlaylistReference(id, name));
-                ServeToast(name + " saved");
+                UpdateTitleBar();
                 return;
             }
 
@@ -324,10 +326,13 @@ namespace Onely
             {
                 var newId = player.SavePlaylistAs(name);
                 SavedPlaylists.Add(new PlaylistReference(newId, name));
+                UpdateTitleBar();
             } 
             else
+            {
                 player.SavePlaylist(name);
-            ServeToast(name + " saved");
+                ServeToast(name + " saved");
+            }
         }
 
         private void CheckIfNameTaken()
@@ -377,6 +382,7 @@ namespace Onely
             if (id == player.Playlist.Id)
             {
                 player.Playlist.UpdateAfterDeletedFromDb();
+                UpdateTitleBar();
             }
             okToDelete = false;
             ServeToast(PlaylistToDelete + " has been deleted");
@@ -518,6 +524,16 @@ namespace Onely
             var notifier = ToastNotificationManager.CreateToastNotifier();
             toaster.ExpirationTime = DateTime.Now.AddSeconds(10);
             notifier.Show(toaster);
+        }
+
+        // Showing info in Title Bar
+        private void UpdateTitleBar()
+        {
+            ApplicationView appView = ApplicationView.GetForCurrentView();
+            if (!String.IsNullOrEmpty(player.Playlist.Name))
+                appView.Title = player.Playlist.Name;
+            else
+                appView.Title = String.Empty;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
