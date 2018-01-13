@@ -516,6 +516,7 @@ namespace Onely
             var toastXml = CreateToast(msg);
             var toaster = new ToastNotification(toastXml);
             var notifier = ToastNotificationManager.CreateToastNotifier();
+            toaster.ExpirationTime = DateTime.Now.AddSeconds(10);
             notifier.Show(toaster);
         }
 
