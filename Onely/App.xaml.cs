@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -104,6 +105,13 @@ namespace Onely
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnFileActivated(FileActivatedEventArgs args)
+        {
+            //TODO: Raise some kind of event for PlayerView to respond to, like:
+            //var filesToLoad = from f in args.Files select (StorageFile)f; 
+            //await page.LoadFiles(filesToLoad);
         }
     }
 }

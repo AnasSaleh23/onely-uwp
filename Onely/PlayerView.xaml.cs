@@ -17,6 +17,7 @@ using System.ComponentModel;
 using Windows.Data.Xml.Dom;
 using System.Xml.Linq;
 using Windows.UI.ViewManagement;
+using Windows.ApplicationModel.Activation;
 
 namespace Onely
 {
@@ -234,7 +235,7 @@ namespace Onely
             }
         }
 
-        private async Task LoadFiles(IEnumerable<StorageFile> files)
+        public async Task LoadFiles(IEnumerable<StorageFile> files)
         {
             ShowOpenPane = false;
             if (files != null)
@@ -522,7 +523,7 @@ namespace Onely
             var toastXml = CreateToast(msg);
             var toaster = new ToastNotification(toastXml);
             var notifier = ToastNotificationManager.CreateToastNotifier();
-            toaster.ExpirationTime = DateTime.Now.AddSeconds(10);
+            toaster.ExpirationTime = DateTime.Now.AddSeconds(4);
             notifier.Show(toaster);
         }
 
